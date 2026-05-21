@@ -391,11 +391,21 @@ function rgbToHex(r, g, b) {
   return '#' + [r,g,b].map(x => x.toString(16).padStart(2,'0')).join('');
 }
 
+async function reload() {
+  all = [];
+  Object.keys(colors).forEach(k => delete colors[k]);
+  Object.keys(aliasMap).forEach(k => delete aliasMap[k]);
+  CATS.forEach(c => { document.getElementById('n-' + c).textContent = '…'; });
+  document.getElementById('n-all').textContent = '…';
+  document.getElementById('grid').innerHTML = '<div class="empty">Loading…</div>';
+  await init();
+}
+
 async function init() {
   const results = await Promise.all([
-    ...CATS.map(c => fetch(`${CDN}/maps/${c}.json`).then(r => r.json()).catch(() => [])),
-    ...CATS.map(c => fetch(`${CDN}/colors/${c}.json`).then(r => r.json()).catch(() => ({}))),
-    ...CATS.map(c => fetch(`${CDN}/aliases/${c}.json`).then(r => r.json()).catch(() => ({}))),
+    ...CATS.map(c => fetch(`${CDN}/maps/${c}.json`, {cache:'no-store'}).then(r => r.json()).catch(() => [])),
+    ...CATS.map(c => fetch(`${CDN}/colors/${c}.json`, {cache:'no-store'}).then(r => r.json()).catch(() => ({}))),
+    ...CATS.map(c => fetch(`${CDN}/aliases/${c}.json`, {cache:'no-store'}).then(r => r.json()).catch(() => ({}))),
   ]);
 
   const maps    = results.slice(0, 4);
@@ -603,15 +613,7 @@ document.getElementById('sz').addEventListener('input', e => {
 
 document.getElementById('cdn-sel').addEventListener('change', e => {
   CDN = e.target.value;
-  // re-fetch maps & colors with new CDN
-  all = [];
-  Object.keys(colors).forEach(k => delete colors[k]);
-  Object.keys(aliasMap).forEach(k => delete aliasMap[k]);
-  CATS.forEach(c => {
-    document.getElementById('n-' + c).textContent = '…';
-  });
-  document.getElementById('n-all').textContent = '…';
-  init();
+  reload();
 });
 
 document.querySelectorAll('.cat-btn').forEach(b => b.addEventListener('click', () => {
