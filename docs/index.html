@@ -153,8 +153,23 @@ main { flex: 1; overflow-y: auto; padding: 12px; }
   height: 2px;
   background: var(--ic, transparent);
 }
-.card:hover { border-color: #444; }
+.card:hover { border-color: #444; transform: translateY(-1px); box-shadow: 0 4px 16px rgba(0,0,0,.4); }
 .card:hover::before { opacity: 1; }
+
+/* copy overlay on hover */
+.card .cp-hint {
+  position: absolute;
+  top: 6px; right: 6px;
+  background: rgba(0,0,0,.6);
+  color: #bbb;
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 3px;
+  opacity: 0;
+  transition: opacity .1s;
+  pointer-events: none;
+}
+.card:hover .cp-hint { opacity: 1; }
 
 .card img {
   width: var(--sz);
@@ -377,8 +392,12 @@ function svgUrl(category, v, name) {
   return `${CDN}/assets/${category}/${v}/${name}.svg`;
 }
 
-function fname(filePath) {
-  return filePath.split(':').pop().toLowerCase();
+function fname(item, category) {
+  // tokens SVGs are named by symbol (lowercase); others by id
+  if (category === 'tokens') {
+    return (item.symbol || item.id || '').toLowerCase();
+  }
+  return (item.filePath || item.id || '').split(':').pop().toLowerCase();
 }
 
 /** Resolve the actual asset directory from filePath (cross-category refs) */
@@ -406,7 +425,9 @@ async function init() {
   CATS.forEach((c, i) => {
     colors[c] = colData[i];
 
-    // build reverse alias map: canonical_id -> [alias, ...]
+    // build reverse alias map: canonical → [alias, ...]
+    // For tokens: aliases.json is { id → symbol }, canonical is symbol, alias is id
+    // For others: aliases.json is { alias → canonical_id }
     aliasMap[c] = {};
     const raw = aliData[i];
     Object.entries(raw).forEach(([alias, canonical]) => {
@@ -415,7 +436,7 @@ async function init() {
     });
 
     maps[i].forEach(item => {
-      all.push({ ...item, _cat: c, _file: fname(item.filePath), _filecat: filecat(item.filePath, c) });
+      all.push({ ...item, _cat: c, _file: fname(item, c), _filecat: filecat(item.filePath, c) });
     });
     document.getElementById('n-' + c).textContent = maps[i].length;
   });
@@ -437,7 +458,11 @@ function getColor(item) {
 function getAliases(item) {
   const am = aliasMap[item._cat];
   if (!am) return [];
-  return am[item.id] || [];
+  // tokens: aliases are keyed by symbol (lowercase) as canonical
+  const key = item._cat === 'tokens'
+    ? (item.symbol || item.id || '').toLowerCase()
+    : item.id;
+  return am[key] || [];
 }
 
 function filter() {
@@ -481,7 +506,8 @@ function render() {
     card.innerHTML = `
       <img src="${u}" alt="${sym}" loading="lazy" onerror="this.style.opacity='.1'">
       <div class="sym">${sym}</div>
-      <div class="nm">${name}</div>`;
+      <div class="nm">${name}</div>
+      <span class="cp-hint">copy url</span>`;
     card.onclick = () => openModal(i);
     frag.appendChild(card);
   });
