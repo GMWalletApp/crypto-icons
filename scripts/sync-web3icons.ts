@@ -157,10 +157,15 @@ function fixCrossTypeIcons(category: string, entries: TokenMeta[]): TokenMeta[] 
     const oldFp = entry.filePath as string;
     if (!srcCat) continue;
 
+    // Tokens SVGs are named by symbol (lowercase); others by id (lowercase)
+    const destName = (category === "tokens" && entry.symbol)
+      ? (entry.symbol as string).toLowerCase()
+      : entry.id.toLowerCase();
+
     for (const variant of VARIANTS) {
       const destDir = join("assets", category, variant);
       mkdirSync(destDir, { recursive: true });
-      const destFile = join(destDir, `${entry.id}.svg`);
+      const destFile = join(destDir, `${destName}.svg`);
       if (!FORCE && existsSync(destFile)) continue;
 
       // Try uppercase then lowercase filename in source category
@@ -225,22 +230,36 @@ function syncMetadata() {
 }
 
 // ─── merge aliases ────────────────────────────────────────────────────────────
-// Source of truth: aliases/{category}.json (committed)
-// Output (generated): packages/core/src/aliases/{category}.json (gitignored)
+// For tokens: auto-generate id→symbol aliases from maps/tokens.json
+//   (tokens SVGs are named by symbol, so users who pass id need an alias)
+// For other categories: read aliases/{category}.json (manually maintained)
+// Writes both aliases/{category}.json (committed) and the merged result.
 
 function mergeAliases() {
-  const outDir = join("packages/core/src/aliases");
-  mkdirSync(outDir, { recursive: true });
+  mkdirSync("aliases", { recursive: true });
 
   for (const category of CATEGORIES) {
     const basePath = join("aliases", `${category}.json`);
-    const outPath = join(outDir, `${category}.json`);
 
     const base: Record<string, string> = existsSync(basePath)
       ? JSON.parse(readFileSync(basePath, "utf8"))
       : {};
 
-    writeFileSync(outPath, JSON.stringify(base), "utf8");
+    if (category === "tokens") {
+      // Auto-generate: id.lower() → symbol.lower() for entries where they differ
+      const mapsPath = join("maps", "tokens.json");
+      if (existsSync(mapsPath)) {
+        const entries = JSON.parse(readFileSync(mapsPath, "utf8")) as TokenMeta[];
+        for (const e of entries) {
+          const sym = (e.symbol as string | undefined)?.toLowerCase();
+          const id = e.id.toLowerCase();
+          if (sym && sym !== id) base[id] = sym;
+        }
+      }
+      // Write back to aliases/tokens.json so it stays committed and up-to-date
+      writeFileSync(basePath, JSON.stringify(base), "utf8");
+    }
+
     console.log(`  aliases/${category}.json  (${Object.keys(base).length} entries)`);
   }
 }
