@@ -370,12 +370,21 @@ let cat = 'all';
 const colors = {};   // colors[cat][key] = {r,g,b}
 const aliasMap = {}; // aliasMap[cat][canonical_id] = [alias, ...]
 
+// Map filePath type prefix → plural directory name
+const TYPE_TO_DIR = { token: 'tokens', network: 'networks', exchange: 'exchanges', wallet: 'wallets' };
+
 function svgUrl(category, v, name) {
   return `${CDN}/assets/${category}/${v}/${name}.svg`;
 }
 
 function fname(filePath) {
   return filePath.split(':').pop().toLowerCase();
+}
+
+/** Resolve the actual asset directory from filePath (cross-category refs) */
+function filecat(filePath, ownCat) {
+  const prefix = filePath.split(':')[0].toLowerCase();
+  return TYPE_TO_DIR[prefix] ?? ownCat;
 }
 
 function rgbToHex(r, g, b) {
@@ -406,7 +415,7 @@ async function init() {
     });
 
     maps[i].forEach(item => {
-      all.push({ ...item, _cat: c, _file: fname(item.filePath) });
+      all.push({ ...item, _cat: c, _file: fname(item.filePath), _filecat: filecat(item.filePath, c) });
     });
     document.getElementById('n-' + c).textContent = maps[i].length;
   });
@@ -416,10 +425,10 @@ async function init() {
 }
 
 function getColor(item) {
-  const col = colors[item._cat];
+  const col = colors[item._filecat];
   if (!col) return null;
   // tokens: keyed by symbol (lowercase); others: by id
-  const key = item._cat === 'tokens'
+  const key = item._filecat === 'tokens'
     ? (item.symbol || item.id || '').toLowerCase()
     : (item.id || '').toLowerCase();
   return col[key] || null;
@@ -457,7 +466,7 @@ function render() {
   const frag = document.createDocumentFragment();
   visible.forEach((item, i) => {
     const v = item.variants.includes(variant) ? variant : item.variants[0];
-    const u = svgUrl(item._cat, v, item._file);
+    const u = svgUrl(item._filecat, v, item._file);
     const sym = (item.symbol || item.id || '').toUpperCase();
     const name = item.name || item.id;
     const col = getColor(item);
@@ -494,7 +503,7 @@ function openModal(i) {
     const has = item.variants.includes(v);
     return `<div class="vc ${has?'':'na'}">
       ${has
-        ? `<img src="${svgUrl(item._cat, v, item._file)}" alt="${v}" loading="lazy">`
+        ? `<img src="${svgUrl(item._filecat, v, item._file)}" alt="${v}" loading="lazy">`
         : `<div class="ph"></div>`}
       <span class="vl">${v}</span>
     </div>`;
@@ -537,7 +546,7 @@ function openModal(i) {
   }
 
   // url
-  const cu = svgUrl(item._cat, variant, item._file);
+  const cu = svgUrl(item._filecat, variant, item._file);
 
   // addresses
   let addrHtml = '';
