@@ -253,28 +253,32 @@ function mergeAliases() {
 interface RGBColor { r: number; g: number; b: number; }
 
 async function extractColors() {
-  const colorsPath = join("maps", "colors.json");
-  const existing: Record<string, RGBColor> = existsSync(colorsPath)
-    ? JSON.parse(readFileSync(colorsPath, "utf8"))
-    : {};
-
-  // Normalize any legacy uppercase keys to lowercase
-  const colors: Record<string, RGBColor> = Object.fromEntries(
-    Object.entries(existing).map(([k, v]) => [k.toLowerCase(), v])
-  );
-  let updated = 0;
+  // Each category gets its own colors/{category}.json file.
+  // Keys are the bare icon name (lowercase), matching the SVG filename stem.
+  mkdirSync("colors", { recursive: true });
+  let totalUpdated = 0;
 
   for (const category of CATEGORIES) {
     const brandedDir = join("assets", category, "branded");
     if (!existsSync(brandedDir)) continue;
 
+    const colorFile = join("colors", `${category}.json`);
+    const existing: Record<string, RGBColor> = existsSync(colorFile)
+      ? JSON.parse(readFileSync(colorFile, "utf8"))
+      : {};
+
+    // Normalize any legacy uppercase keys to lowercase
+    const colors: Record<string, RGBColor> = Object.fromEntries(
+      Object.entries(existing).map(([k, v]) => [k.toLowerCase(), v])
+    );
+    let updated = 0;
+
     const files = readdirSync(brandedDir).filter((f) => f.endsWith(".svg"));
     for (const file of files) {
       const name = file.replace(/\.svg$/, "").toLowerCase();
-      const key = `${category}/${name}`;
 
-      // Skip if already extracted and SVG hasn't been modified
-      if (!FORCE && existing[key]) continue;
+      // Skip if already extracted (use --force to re-extract all)
+      if (!FORCE && colors[name]) continue;
 
       const svgPath = join(brandedDir, file);
       try {
@@ -293,7 +297,7 @@ async function extractColors() {
           if (data[i + 3] > 64) { r += data[i]; g += data[i + 1]; bl += data[i + 2]; count++; }
         }
         if (count > 0) {
-          colors[key] = {
+          colors[name] = {
             r: Math.round(r / count),
             g: Math.round(g / count),
             b: Math.round(bl / count),
@@ -304,11 +308,13 @@ async function extractColors() {
         // SVG may have features sharp can't rasterize — skip silently
       }
     }
-    console.log(`  ${category.padEnd(12)} ${files.length} icons`);
+
+    writeFileSync(colorFile, JSON.stringify(colors, null, 2), "utf8");
+    console.log(`  colors/${category}.json  (${Object.keys(colors).length} total, ${updated} new)`);
+    totalUpdated += updated;
   }
 
-  writeFileSync(colorsPath, JSON.stringify(colors, null, 2), "utf8");
-  console.log(`  maps/colors.json  (${Object.keys(colors).length} total, ${updated} updated)`);
+  console.log(`  Total colors updated: ${totalUpdated}`);
 }
 
 // ─── main ─────────────────────────────────────────────────────────────────────
