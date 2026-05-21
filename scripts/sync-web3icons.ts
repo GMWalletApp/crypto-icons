@@ -220,7 +220,7 @@ function syncMetadata() {
     // into this category's asset dir, rewrite filePath to own-type:id.
     merged = fixCrossTypeIcons(category, merged);
 
-    writeFileSync(dest, JSON.stringify(merged, null, 2), "utf8");
+    writeFileSync(dest, JSON.stringify(merged), "utf8");
   }
 }
 
@@ -240,7 +240,7 @@ function mergeAliases() {
       ? JSON.parse(readFileSync(basePath, "utf8"))
       : {};
 
-    writeFileSync(outPath, JSON.stringify(base, null, 2), "utf8");
+    writeFileSync(outPath, JSON.stringify(base), "utf8");
     console.log(`  aliases/${category}.json  (${Object.keys(base).length} entries)`);
   }
 }
@@ -321,7 +321,7 @@ async function extractColors() {
       }
     }
 
-    writeFileSync(colorFile, JSON.stringify(colors, null, 2), "utf8");
+    writeFileSync(colorFile, JSON.stringify(colors), "utf8");
     console.log(`  colors/${category}.json  (${Object.keys(colors).length} total, ${updated} new)`);
     totalUpdated += updated;
   }
