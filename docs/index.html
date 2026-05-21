@@ -2,342 +2,344 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>crypto-icons</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>crypto-icons · GMWalletApp</title>
 <style>
+/* ── Reset & Tokens ─────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --bg: #0e0e0e;
-  --surface: #161616;
-  --border: #222;
-  --text: #ddd;
-  --muted: #555;
-  --accent: #5b6ef5;
+  --bg:      #0d0e11;
+  --surface: #16181d;
+  --surface2:#1e2028;
+  --border:  #2a2c35;
+  --border2: #363844;
+  --text:    #e8eaf0;
+  --muted:   #7a7f96;
+  --accent:  #6c63ff;
+  --accent2: #8b85ff;
+  --tag-bg:  #1e2028;
+  --red:     #ff5a5a;
   --sz: 44px;
-  --font: ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --radius: 10px;
+  --nav-h: 60px;
+  --aside-w: 160px;
 }
 
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: var(--font);
-  font-size: 13px;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
+html, body { height: 100%; background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif; font-size: 14px; line-height: 1.5; }
 
-/* nav */
+/* ── Scrollbar ───────────────────────────────────── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+/* ── Nav ─────────────────────────────────────────── */
 nav {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 9px 14px;
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  height: var(--nav-h);
+  display: flex; align-items: center; gap: 12px;
+  padding: 0 20px;
+  background: rgba(13,14,17,.85);
+  backdrop-filter: blur(14px) saturate(1.4);
   border-bottom: 1px solid var(--border);
-  flex-shrink: 0;
 }
 
-.logo { font-size: 14px; font-weight: 600; letter-spacing: -.3px; white-space: nowrap; opacity: .9; }
-.logo span { color: var(--accent); }
+.logo {
+  font-size: 16px; font-weight: 700; letter-spacing: -.3px;
+  white-space: nowrap; flex-shrink: 0;
+}
+.logo span { color: var(--accent2); }
 
-.search-wrap { position: relative; flex: 1; max-width: 300px; }
-.search-wrap svg { position: absolute; left: 8px; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; }
+.search-wrap {
+  position: relative; flex: 1; max-width: 320px;
+}
+.search-wrap svg {
+  position: absolute; left: 11px; top: 50%; transform: translateY(-50%);
+  color: var(--muted); pointer-events: none;
+}
 #q {
-  width: 100%;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  color: var(--text);
-  padding: 6px 10px 6px 28px;
-  font: inherit;
-  outline: none;
+  width: 100%; padding: 8px 12px 8px 32px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; color: var(--text); font: inherit; font-size: 13px;
+  outline: none; transition: border-color .15s;
 }
-#q:focus { border-color: var(--accent); }
 #q::placeholder { color: var(--muted); }
+#q:focus { border-color: var(--accent); }
 
+/* variant tabs */
 .seg {
-  display: flex;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  overflow: hidden;
+  display: flex; gap: 2px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; padding: 3px; flex-shrink: 0;
 }
 .seg button {
-  background: none;
-  border: none;
-  border-right: 1px solid var(--border);
-  color: var(--muted);
-  padding: 5px 11px;
-  font: inherit;
-  cursor: pointer;
-  white-space: nowrap;
+  background: none; border: none; color: var(--muted);
+  padding: 5px 11px; border-radius: 6px; font: inherit; font-size: 12px;
+  cursor: pointer; transition: all .15s; white-space: nowrap;
 }
-.seg button:last-child { border-right: none; }
-.seg button.on { background: var(--accent); color: #fff; }
-.seg button:not(.on):hover { color: var(--text); }
+.seg button.on { background: var(--accent); color: #fff; font-weight: 600; }
+.seg button:not(.on):hover { color: var(--text); background: var(--surface2); }
 
+/* size slider */
 .szsplit {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  color: var(--muted);
+  display: flex; align-items: center; gap: 7px; flex-shrink: 0;
 }
-.szsplit input[type=range] { width: 68px; accent-color: var(--accent); cursor: pointer; }
+.szsplit svg { color: var(--muted); flex-shrink: 0; }
+#sz {
+  -webkit-appearance: none; appearance: none;
+  width: 80px; height: 4px;
+  background: var(--border2); border-radius: 2px; outline: none; cursor: pointer;
+}
+#sz::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 14px; height: 14px;
+  background: var(--accent); border-radius: 50%;
+  box-shadow: 0 0 0 3px rgba(108,99,255,.25);
+}
+#sz::-moz-range-thumb {
+  width: 14px; height: 14px; border: none;
+  background: var(--accent); border-radius: 50%;
+}
 
-#cnt { color: var(--muted); font-size: 12px; margin-left: auto; white-space: nowrap; }
+/* icon count */
+#cnt {
+  font-size: 12px; color: var(--muted); white-space: nowrap; flex-shrink: 0;
+}
 
-/* layout */
+/* cdn selector */
+.cdn-wrap { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+.cdn-label { font-size: 11px; color: var(--muted); white-space: nowrap; }
+.cdn-sel {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; color: var(--text);
+  padding: 6px 10px; font: inherit; font-size: 12px;
+  cursor: pointer; outline: none; transition: border-color .15s;
+}
+.cdn-sel:focus { border-color: var(--accent); }
+
+/* ── Layout ──────────────────────────────────────── */
 .layout {
   display: flex;
-  flex: 1;
-  min-height: 0;
+  padding-top: var(--nav-h);
+  min-height: 100vh;
 }
 
-/* sidebar */
 aside {
-  width: 148px;
-  flex-shrink: 0;
+  position: fixed; top: var(--nav-h); left: 0; bottom: 0;
+  width: var(--aside-w);
+  padding: 16px 12px;
   border-right: 1px solid var(--border);
-  padding: 6px;
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
+  background: var(--bg);
+  display: flex; flex-direction: column; gap: 2px;
+  overflow-y: auto;
+}
+
+.cat-lbl {
+  font-size: 10px; font-weight: 600; letter-spacing: .08em;
+  color: var(--muted); text-transform: uppercase;
+  padding: 4px 8px 8px;
 }
 
 .cat-btn {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 7px 9px;
-  border-radius: 5px;
-  background: none;
-  border: none;
-  color: var(--muted);
-  font: inherit;
-  cursor: pointer;
-  width: 100%;
-  text-align: left;
+  display: flex; align-items: center; justify-content: space-between;
+  width: 100%; padding: 8px 10px;
+  background: none; border: none; border-radius: 8px;
+  color: var(--muted); font: inherit; font-size: 13px;
+  cursor: pointer; text-align: left; transition: all .15s;
 }
-.cat-btn:hover { color: var(--text); background: var(--surface); }
-.cat-btn.on { color: var(--text); background: var(--surface); font-weight: 500; }
-.cat-btn .n { font-size: 11px; }
+.cat-btn .n {
+  font-size: 11px; color: var(--muted);
+  background: var(--surface); border-radius: 4px; padding: 1px 5px;
+  transition: all .15s;
+}
+.cat-btn:hover { color: var(--text); background: var(--surface2); }
+.cat-btn.on { color: var(--text); background: var(--surface2); font-weight: 600; }
+.cat-btn.on .n { background: var(--accent); color: #fff; }
 
-/* scroll area */
-main { flex: 1; overflow-y: auto; padding: 12px; }
+main {
+  margin-left: var(--aside-w);
+  flex: 1;
+  padding: 20px;
+}
 
+/* ── Grid ────────────────────────────────────────── */
 #grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(calc(var(--sz) + 58px), 1fr));
-  gap: 5px;
+  grid-template-columns: repeat(auto-fill, minmax(calc(var(--sz) + 36px), 1fr));
+  gap: 8px;
 }
 
 .card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 7px;
-  padding: 13px 8px 10px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  cursor: pointer;
-  transition: border-color .1s;
   position: relative;
-  overflow: hidden;
+  display: flex; flex-direction: column; align-items: center;
+  padding: 14px 8px 10px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); cursor: pointer;
+  transition: transform .15s, border-color .15s, box-shadow .15s;
+  --ic: var(--accent);
 }
 .card::before {
-  content: '';
-  position: absolute;
-  bottom: 0; left: 0; right: 0;
-  height: 2px;
-  background: var(--ic, transparent);
+  content: ''; position: absolute; inset: 0; border-radius: var(--radius);
+  background: radial-gradient(circle at 50% -20%, rgba(var(--ic-r,108),var(--ic-g,99),var(--ic-b,255),.1) 0%, transparent 65%);
+  opacity: 0; transition: opacity .2s; pointer-events: none;
 }
-.card:hover { border-color: #444; }
+.card:hover { transform: translateY(-3px); border-color: var(--border2); box-shadow: 0 8px 24px rgba(0,0,0,.4); }
 .card:hover::before { opacity: 1; }
+.card img { width: var(--sz); height: var(--sz); object-fit: contain; display: block; }
+.sym { font-size: 11px; font-weight: 700; letter-spacing: .04em; margin-top: 8px; color: var(--text); line-height: 1.2; text-align: center; word-break: break-all; }
+.nm  { font-size: 10px; color: var(--muted); margin-top: 2px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.cat-tag {
+  font-size: 9px; letter-spacing: .05em; text-transform: uppercase;
+  color: var(--accent2); margin-top: 4px; font-weight: 600;
+}
 
-.card img {
-  width: var(--sz);
-  height: var(--sz);
-  object-fit: contain;
-  display: block;
-}
-.card .sym {
-  font-size: 12px;
-  font-weight: 600;
-  max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  text-align: center;
-}
-.card .nm {
-  font-size: 11px;
-  color: var(--muted);
-  max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  text-align: center;
-  width: 100%;
-}
-.card .aliases {
-  font-size: 10px;
-  color: #3b3b3b;
-  max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  text-align: center;
-  width: 100%;
-}
-.card:hover .aliases { color: #555; }
+/* ── Empty ───────────────────────────────────────── */
+.empty { padding: 80px 20px; text-align: center; color: var(--muted); font-size: 15px; }
 
-.empty { grid-column: 1/-1; text-align: center; padding: 80px 20px; color: var(--muted); }
-
-/* modal */
+/* ── Overlay / Modal ─────────────────────────────── */
 .ov {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,.7);
-  backdrop-filter: blur(4px);
-  z-index: 100;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  position: fixed; inset: 0; z-index: 200;
+  background: rgba(0,0,0,.6); backdrop-filter: blur(4px);
+  display: flex; align-items: center; justify-content: center;
   padding: 20px;
 }
 .ov.hide { display: none; }
 
 .modal {
-  background: var(--surface);
-  border: 1px solid #2a2a2a;
-  border-radius: 10px;
-  width: 100%;
-  max-width: 500px;
-  max-height: 88vh;
-  overflow-y: auto;
+  background: var(--surface); border: 1px solid var(--border2);
+  border-radius: 16px; width: 100%; max-width: 600px;
+  max-height: 90vh; overflow-y: auto;
+  box-shadow: 0 24px 64px rgba(0,0,0,.6);
+  animation: up .18s ease;
 }
+@keyframes up { from { transform: translateY(16px); opacity: 0; } }
 
 .mhd {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px 18px 12px;
-  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 20px 24px 16px; border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; background: var(--surface); z-index: 1;
+  border-radius: 16px 16px 0 0;
 }
-.mhd h2 { font-size: 15px; font-weight: 600; }
+.mhd h2 { font-size: 18px; font-weight: 700; }
 .mcl {
-  background: none;
-  border: 1px solid var(--border);
-  color: var(--muted);
-  width: 26px; height: 26px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 14px;
+  background: var(--surface2); border: 1px solid var(--border); border-radius: 8px;
+  color: var(--muted); width: 32px; height: 32px; display: flex; align-items: center;
+  justify-content: center; cursor: pointer; font-size: 14px; transition: all .15s;
 }
-.mcl:hover { color: var(--text); }
+.mcl:hover { color: var(--text); border-color: var(--border2); }
 
-.mbd { padding: 16px 18px; display: flex; flex-direction: column; gap: 14px; }
+.mbd { padding: 20px 24px 24px; display: flex; flex-direction: column; gap: 20px; }
 
-.sec { }
-.sec-t { font-size: 10px; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); margin-bottom: 8px; }
+.sec-t {
+  font-size: 11px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 10px;
+}
 
-.vg { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; }
+/* variant grid */
+.vg { display: flex; gap: 10px; flex-wrap: wrap; }
 .vc {
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 7px;
-  padding: 12px 8px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 7px;
+  flex: 1; min-width: 110px; display: flex; flex-direction: column; align-items: center;
+  gap: 8px; padding: 14px 10px;
+  background: var(--surface2); border: 1px solid var(--border); border-radius: 10px;
 }
-.vc img { width: 52px; height: 52px; object-fit: contain; }
-.vc .vl { font-size: 10px; color: var(--muted); }
-.vc.na { opacity: .22; }
-.vc .ph { width: 52px; height: 52px; background: #1e1e1e; border-radius: 5px; }
+.vc.na { opacity: .3; }
+.vc img { width: 48px; height: 48px; object-fit: contain; }
+.ph { width: 48px; height: 48px; }
+.vl { font-size: 11px; color: var(--muted); text-transform: capitalize; }
 
-.fields { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
-.field { background: var(--bg); border-radius: 5px; padding: 8px 10px; }
-.field .fk { font-size: 10px; color: var(--muted); margin-bottom: 2px; }
-.field .fv { font-size: 12px; word-break: break-all; }
+/* fields */
+.fields { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.field { background: var(--surface2); border-radius: 8px; padding: 10px 12px; }
+.fk { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 3px; }
+.fv { font-size: 13px; font-weight: 500; color: var(--text); word-break: break-all; }
 
-.aliases-row {
-  background: var(--bg);
-  border-radius: 5px;
-  padding: 8px 10px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-}
+/* aliases */
+.aliases-row { display: flex; flex-wrap: wrap; gap: 6px; }
 .atag {
-  background: #1e1e1e;
-  border: 1px solid var(--border);
-  border-radius: 3px;
-  padding: 2px 6px;
-  font-size: 11px;
-  color: #888;
+  background: var(--surface2); border: 1px solid var(--border2);
+  border-radius: 6px; padding: 3px 8px; font-size: 12px; color: var(--muted);
+  font-family: 'SF Mono', 'Fira Code', monospace;
 }
 
-.colorbar {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: var(--bg);
-  border-radius: 5px;
-  padding: 8px 10px;
-}
-.colorswatch { width: 24px; height: 24px; border-radius: 4px; flex-shrink: 0; }
-.colorhex { font-size: 12px; font-family: ui-monospace, monospace; }
-.colorrgb { font-size: 11px; color: var(--muted); }
+/* color */
+.colorbar { display: flex; align-items: center; gap: 10px; }
+.colorswatch { width: 32px; height: 32px; border-radius: 8px; border: 1px solid rgba(255,255,255,.1); flex-shrink: 0; }
+.colorhex { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 13px; font-weight: 600; }
+.colorrgb { font-size: 12px; color: var(--muted); }
 
-.urlrow {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: var(--bg);
-  border-radius: 5px;
-  padding: 8px 10px;
+/* url rows */
+.url-section { display: flex; flex-direction: column; gap: 6px; }
+.url-row {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--surface2); border: 1px solid var(--border); border-radius: 8px;
+  padding: 8px 12px;
 }
-.urlrow code { flex: 1; font-size: 11px; color: var(--muted); word-break: break-all; font-family: ui-monospace, monospace; }
+.url-row code {
+  flex: 1; font-family: 'SF Mono', 'Fira Code', monospace; font-size: 11px;
+  color: var(--muted); word-break: break-all; line-height: 1.5;
+}
+.url-variant-label {
+  font-size: 10px; font-weight: 700; color: var(--accent2); text-transform: uppercase;
+  letter-spacing: .05em; white-space: nowrap; min-width: 68px;
+}
+.url-na { opacity: .35; }
+.url-na code { font-style: italic; }
 .cpbtn {
+  background: var(--surface); border: 1px solid var(--border2); border-radius: 6px;
+  color: var(--muted); font: inherit; font-size: 11px;
+  padding: 4px 10px; cursor: pointer; white-space: nowrap; transition: all .15s;
   flex-shrink: 0;
-  background: #1e1e1e;
-  border: 1px solid var(--border);
-  color: #aaa;
-  padding: 3px 9px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 11px;
 }
-.cpbtn:hover { color: var(--text); }
+.cpbtn:hover { color: var(--text); border-color: var(--accent); }
+.cpbtn.ok { color: #4ade80; border-color: #4ade80; }
+
+/* addresses */
+.addr-row {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--surface2); border: 1px solid var(--border); border-radius: 8px;
+  padding: 8px 12px;
+}
+.addr-chain { font-size: 11px; font-weight: 700; color: var(--text); white-space: nowrap; min-width: 72px; }
+.addr-addr { flex: 1; font-family: 'SF Mono', 'Fira Code', monospace; font-size: 11px; color: var(--muted); word-break: break-all; }
 </style>
 </head>
 <body>
 
 <nav>
   <div class="logo">crypto<span>-icons</span></div>
+
   <div class="search-wrap">
     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
     <input id="q" placeholder="Search icons…" autocomplete="off" spellcheck="false">
   </div>
+
   <div class="seg" id="vtabs">
     <button class="on" data-v="branded">Branded</button>
     <button data-v="mono">Mono</button>
     <button data-v="background">BG</button>
   </div>
+
   <div class="szsplit">
-    <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor"><rect width="10" height="10" rx="2"/></svg>
+    <svg width="9" height="9" viewBox="0 0 10 10" fill="currentColor"><rect width="10" height="10" rx="2"/></svg>
     <input id="sz" type="range" min="24" max="96" value="44">
-    <svg width="15" height="15" viewBox="0 0 10 10" fill="currentColor"><rect width="10" height="10" rx="2"/></svg>
+    <svg width="14" height="14" viewBox="0 0 10 10" fill="currentColor"><rect width="10" height="10" rx="2"/></svg>
   </div>
+
   <span id="cnt"></span>
+
+  <div class="cdn-wrap">
+    <span class="cdn-label">CDN</span>
+    <select class="cdn-sel" id="cdn-sel">
+      <option value="https://cdn.jsdmirror.com/gh/GMWalletApp/crypto-icons@main">jsdmirror</option>
+      <option value="https://cdn.jsdelivr.net/gh/GMWalletApp/crypto-icons@main">jsdelivr</option>
+      <option value="https://fastly.jsdelivr.net/gh/GMWalletApp/crypto-icons@main">fastly</option>
+      <option value="https://gcore.jsdelivr.net/gh/GMWalletApp/crypto-icons@main">gcore</option>
+    </select>
+  </div>
 </nav>
 
 <div class="layout">
   <aside>
+    <div class="cat-lbl">Category</div>
     <button class="cat-btn on" data-cat="all">All <span class="n" id="n-all"></span></button>
     <button class="cat-btn" data-cat="tokens">Tokens <span class="n" id="n-tokens"></span></button>
     <button class="cat-btn" data-cat="networks">Networks <span class="n" id="n-networks"></span></button>
@@ -358,30 +360,28 @@ main { flex: 1; overflow-y: auto; padding: 12px; }
 </div>
 
 <script>
-const CDN = 'https://cdn.jsdmirror.com/gh/GMWalletApp/crypto-icons@main';
+let CDN = 'https://cdn.jsdmirror.com/gh/GMWalletApp/crypto-icons@main';
 const CATS = ['tokens','networks','exchanges','wallets'];
+const VARIANTS = ['branded','mono','background'];
+const TYPE_TO_DIR = { token: 'tokens', network: 'networks', exchange: 'exchanges', wallet: 'wallets' };
 
 let all = [];
 let visible = [];
 let variant = 'branded';
 let cat = 'all';
 
-// colors & aliases per category
-const colors = {};   // colors[cat][key] = {r,g,b}
-const aliasMap = {}; // aliasMap[cat][canonical_id] = [alias, ...]
-
-// Map filePath type prefix → plural directory name
-const TYPE_TO_DIR = { token: 'tokens', network: 'networks', exchange: 'exchanges', wallet: 'wallets' };
+const colors   = {};
+const aliasMap = {};
 
 function svgUrl(category, v, name) {
   return `${CDN}/assets/${category}/${v}/${name}.svg`;
 }
 
-function fname(filePath) {
-  return filePath.split(':').pop().toLowerCase();
+function fname(item, category) {
+  if (category === 'tokens') return (item.symbol || item.id || '').toLowerCase();
+  return (item.filePath || item.id || '').split(':').pop().toLowerCase();
 }
 
-/** Resolve the actual asset directory from filePath (cross-category refs) */
 function filecat(filePath, ownCat) {
   const prefix = filePath.split(':')[0].toLowerCase();
   return TYPE_TO_DIR[prefix] ?? ownCat;
@@ -392,12 +392,11 @@ function rgbToHex(r, g, b) {
 }
 
 async function init() {
-  const fetches = [
+  const results = await Promise.all([
     ...CATS.map(c => fetch(`${CDN}/maps/${c}.json`).then(r => r.json()).catch(() => [])),
     ...CATS.map(c => fetch(`${CDN}/colors/${c}.json`).then(r => r.json()).catch(() => ({}))),
     ...CATS.map(c => fetch(`${CDN}/aliases/${c}.json`).then(r => r.json()).catch(() => ({}))),
-  ];
-  const results = await Promise.all(fetches);
+  ]);
 
   const maps    = results.slice(0, 4);
   const colData = results.slice(4, 8);
@@ -406,7 +405,6 @@ async function init() {
   CATS.forEach((c, i) => {
     colors[c] = colData[i];
 
-    // build reverse alias map: canonical_id -> [alias, ...]
     aliasMap[c] = {};
     const raw = aliData[i];
     Object.entries(raw).forEach(([alias, canonical]) => {
@@ -415,19 +413,17 @@ async function init() {
     });
 
     maps[i].forEach(item => {
-      all.push({ ...item, _cat: c, _file: fname(item.filePath), _filecat: filecat(item.filePath, c) });
+      all.push({ ...item, _cat: c, _file: fname(item, c), _filecat: filecat(item.filePath, c) });
     });
-    document.getElementById('n-' + c).textContent = maps[i].length;
+    document.getElementById('n-' + c).textContent = maps[i].length.toLocaleString();
   });
-  document.getElementById('n-all').textContent = all.length;
-
+  document.getElementById('n-all').textContent = all.length.toLocaleString();
   filter();
 }
 
 function getColor(item) {
   const col = colors[item._filecat];
   if (!col) return null;
-  // tokens: keyed by symbol (lowercase); others: by id
   const key = item._filecat === 'tokens'
     ? (item.symbol || item.id || '').toLowerCase()
     : (item.id || '').toLowerCase();
@@ -437,7 +433,10 @@ function getColor(item) {
 function getAliases(item) {
   const am = aliasMap[item._cat];
   if (!am) return [];
-  return am[item.id] || [];
+  const key = item._cat === 'tokens'
+    ? (item.symbol || item.id || '').toLowerCase()
+    : item.id;
+  return am[key] || [];
 }
 
 function filter() {
@@ -446,8 +445,8 @@ function filter() {
     if (cat !== 'all' && item._cat !== cat) return false;
     if (q) {
       const aliases = getAliases(item).join(' ');
-      const haystack = [item.symbol, item.name, item.id, aliases].filter(Boolean).join(' ').toLowerCase();
-      if (!haystack.includes(q)) return false;
+      const hay = [item.symbol, item.name, item.id, aliases].filter(Boolean).join(' ').toLowerCase();
+      if (!hay.includes(q)) return false;
     }
     return true;
   });
@@ -457,31 +456,30 @@ function filter() {
 
 function render() {
   const grid = document.getElementById('grid');
-
-  if (!visible.length) {
-    grid.innerHTML = '<div class="empty">No results</div>';
-    return;
-  }
+  if (!visible.length) { grid.innerHTML = '<div class="empty">No results</div>'; return; }
 
   const frag = document.createDocumentFragment();
   visible.forEach((item, i) => {
     const v = item.variants.includes(variant) ? variant : item.variants[0];
     const u = svgUrl(item._filecat, v, item._file);
     const sym = (item.symbol || item.id || '').toUpperCase();
-    const name = item.name || item.id;
     const col = getColor(item);
-    const alts = getAliases(item);
 
     const card = document.createElement('div');
     card.className = 'card';
+
+    // inject rgb vars for radial glow
     if (col) {
-      card.style.setProperty('--ic', `rgb(${col.r},${col.g},${col.b})`);
+      card.style.setProperty('--ic-r', col.r);
+      card.style.setProperty('--ic-g', col.g);
+      card.style.setProperty('--ic-b', col.b);
     }
 
     card.innerHTML = `
-      <img src="${u}" alt="${sym}" loading="lazy" onerror="this.style.opacity='.1'">
+      <img src="${u}" alt="${sym}" loading="lazy" onerror="this.style.opacity='.12'">
       <div class="sym">${sym}</div>
-      <div class="nm">${name}</div>`;
+      <div class="nm">${item.name || item.id}</div>
+      <div class="cat-tag">${item._cat}</div>`;
     card.onclick = () => openModal(i);
     frag.appendChild(card);
   });
@@ -492,19 +490,16 @@ function render() {
 
 function openModal(i) {
   const item = visible[i];
-  const col = getColor(item);
+  const col  = getColor(item);
   const alts = getAliases(item);
 
   document.getElementById('mtitle').textContent = item.name || item.id;
 
-  // variants
-  const VARIANTS = ['branded','mono','background'];
+  // variants preview
   const vcards = VARIANTS.map(v => {
     const has = item.variants.includes(v);
-    return `<div class="vc ${has?'':'na'}">
-      ${has
-        ? `<img src="${svgUrl(item._filecat, v, item._file)}" alt="${v}" loading="lazy">`
-        : `<div class="ph"></div>`}
+    return `<div class="vc ${has ? '' : 'na'}">
+      ${has ? `<img src="${svgUrl(item._filecat, v, item._file)}" alt="${v}" loading="lazy">` : '<div class="ph"></div>'}
       <span class="vl">${v}</span>
     </div>`;
   }).join('');
@@ -512,14 +507,14 @@ function openModal(i) {
   // fields
   const defs = [
     ['Category', item._cat],
-    ['ID', item.id],
-    item.symbol   ? ['Symbol', item.symbol.toUpperCase()] : null,
-    item.chainId  ? ['Chain ID', item.chainId] : null,
-    item.caip2id  ? ['CAIP-2', item.caip2id] : null,
-    item.type     ? ['Type', item.type] : null,
-    item.marketCapRank ? ['Market Cap Rank', '#' + item.marketCapRank] : null,
+    ['ID',       item.id],
+    item.symbol        ? ['Symbol',          item.symbol.toUpperCase()] : null,
+    item.chainId       ? ['Chain ID',         item.chainId]             : null,
+    item.caip2id       ? ['CAIP-2',           item.caip2id]             : null,
+    item.type          ? ['Type',             item.type]                : null,
+    item.marketCapRank ? ['Market Cap Rank', '#' + item.marketCapRank]  : null,
   ].filter(Boolean);
-  const fieldsHtml = defs.map(([k,v]) =>
+  const fieldsHtml = defs.map(([k, v]) =>
     `<div class="field"><div class="fk">${k}</div><div class="fv">${v}</div></div>`
   ).join('');
 
@@ -545,19 +540,40 @@ function openModal(i) {
     </div>`;
   }
 
-  // url
-  const cu = svgUrl(item._filecat, variant, item._file);
+  // ALL variant URLs
+  const urlRows = VARIANTS.map(v => {
+    const has = item.variants.includes(v);
+    const url = svgUrl(item._filecat, v, item._file);
+    if (has) {
+      return `<div class="url-row">
+        <span class="url-variant-label">${v}</span>
+        <code>${url}</code>
+        <button class="cpbtn" onclick="cp('${url}',this)">Copy</button>
+      </div>`;
+    } else {
+      return `<div class="url-row url-na">
+        <span class="url-variant-label">${v}</span>
+        <code>not available</code>
+      </div>`;
+    }
+  }).join('');
+
+  const urlHtml = `<div class="sec">
+    <div class="sec-t">CDN URLs · <span style="color:var(--accent2);font-style:normal">${document.getElementById('cdn-sel').options[document.getElementById('cdn-sel').selectedIndex].text}</span></div>
+    <div class="url-section">${urlRows}</div>
+  </div>`;
 
   // addresses
   let addrHtml = '';
   if (item.addresses && Object.keys(item.addresses).length) {
     const rows = Object.entries(item.addresses).map(([chain, addr]) =>
-      `<div class="urlrow">
-        <code><b style="color:var(--text)">${chain}</b>&nbsp;&nbsp;${addr}</code>
+      `<div class="addr-row">
+        <span class="addr-chain">${chain}</span>
+        <span class="addr-addr">${addr}</span>
         <button class="cpbtn" onclick="cp('${addr}',this)">Copy</button>
       </div>`
     ).join('');
-    addrHtml = `<div class="sec"><div class="sec-t">Contract Addresses</div>${rows}</div>`;
+    addrHtml = `<div class="sec"><div class="sec-t">Contract Addresses</div><div class="url-section">${rows}</div></div>`;
   }
 
   document.getElementById('mbd').innerHTML = `
@@ -565,10 +581,7 @@ function openModal(i) {
     <div class="sec"><div class="sec-t">Details</div><div class="fields">${fieldsHtml}</div></div>
     ${aliHtml}
     ${colorHtml}
-    <div class="sec">
-      <div class="sec-t">CDN URL (${variant})</div>
-      <div class="urlrow"><code>${cu}</code><button class="cpbtn" onclick="cp('${cu}',this)">Copy</button></div>
-    </div>
+    ${urlHtml}
     ${addrHtml}`;
 
   document.getElementById('ov').classList.remove('hide');
@@ -576,15 +589,29 @@ function openModal(i) {
 
 function cp(text, btn) {
   navigator.clipboard.writeText(text).catch(() => {});
-  const orig = btn.textContent;
   btn.textContent = '✓';
-  setTimeout(() => btn.textContent = orig, 1200);
+  btn.classList.add('ok');
+  setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('ok'); }, 1300);
 }
 
-// events
+// ── Events ──────────────────────────────────────────
 document.getElementById('q').addEventListener('input', filter);
+
 document.getElementById('sz').addEventListener('input', e => {
   document.documentElement.style.setProperty('--sz', e.target.value + 'px');
+});
+
+document.getElementById('cdn-sel').addEventListener('change', e => {
+  CDN = e.target.value;
+  // re-fetch maps & colors with new CDN
+  all = [];
+  Object.keys(colors).forEach(k => delete colors[k]);
+  Object.keys(aliasMap).forEach(k => delete aliasMap[k]);
+  CATS.forEach(c => {
+    document.getElementById('n-' + c).textContent = '…';
+  });
+  document.getElementById('n-all').textContent = '…';
+  init();
 });
 
 document.querySelectorAll('.cat-btn').forEach(b => b.addEventListener('click', () => {

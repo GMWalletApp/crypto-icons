@@ -76,6 +76,22 @@ function cloneOrUpdate() {
 
 // ─── copy SVGs ────────────────────────────────────────────────────────────────
 
+// Category name (plural) → singular type prefix used in filePath
+const CAT_TO_TYPE: Record<string, string> = {
+  tokens: "token",
+  networks: "network",
+  exchanges: "exchange",
+  wallets: "wallet",
+};
+// Reverse: type prefix → category name
+const TYPE_TO_CAT: Record<string, string> = Object.fromEntries(
+  Object.entries(CAT_TO_TYPE).map(([cat, type]) => [type, cat])
+);
+
+/**
+ * Copy SVGs from upstream web3icons, one category at a time.
+ * Each category only gets SVGs from its own raw-svgs/{category}/ directory.
+ */
 function syncSVGs() {
   let totalCopied = 0;
   let totalSkipped = 0;
@@ -117,6 +133,61 @@ function syncSVGs() {
   console.log(`\n  Total: ↓${totalCopied} copied, ${totalSkipped} cached`);
 }
 
+/**
+ * For entries whose upstream filePath references a different category
+ * (e.g. network shibarium → token:SHIB), copy the SVG from the source
+ * category into this category's asset directory and rewrite filePath to
+ * own-type:id so consumers never need to look outside the category.
+ *
+ * Rule: icons must only come from their own category's source directory.
+ * Cross-type references are resolved by copying the source SVG locally.
+ */
+function fixCrossTypeIcons(category: string, entries: TokenMeta[]): TokenMeta[] {
+  const ownType = CAT_TO_TYPE[category];
+  const crossEntries = entries.filter(
+    (e) => typeof e.filePath === "string" && !e.filePath.startsWith(`${ownType}:`)
+  );
+
+  if (crossEntries.length === 0) return entries;
+
+  let fixed = 0;
+  for (const entry of crossEntries) {
+    const [srcType, srcId] = (entry.filePath as string).split(":", 2);
+    const srcCat = TYPE_TO_CAT[srcType];
+    const oldFp = entry.filePath as string;
+    if (!srcCat) continue;
+
+    // Tokens SVGs are named by symbol (lowercase); others by id (lowercase)
+    const destName = (category === "tokens" && entry.symbol)
+      ? (entry.symbol as string).toLowerCase()
+      : entry.id.toLowerCase();
+
+    for (const variant of VARIANTS) {
+      const destDir = join("assets", category, variant);
+      mkdirSync(destDir, { recursive: true });
+      const destFile = join(destDir, `${destName}.svg`);
+      if (!FORCE && existsSync(destFile)) continue;
+
+      // Try uppercase then lowercase filename in source category
+      const srcDir = join(CLONE_DIR, "raw-svgs", srcCat, variant);
+      let srcFile: string | null = null;
+      for (const name of [srcId, srcId.toLowerCase()]) {
+        const candidate = join(srcDir, `${name}.svg`);
+        if (existsSync(candidate)) { srcFile = candidate; break; }
+      }
+      if (srcFile) copyFileSync(srcFile, destFile);
+    }
+
+    // Rewrite filePath to own-type:id
+    entry.filePath = `${ownType}:${entry.id}`;
+    fixed++;
+    console.log(`  ↳ cross-type fix: ${category}/${entry.id} (${oldFp} → ${entry.filePath})`);
+  }
+
+  if (fixed > 0) console.log(`  Fixed ${fixed} cross-type icon(s) for ${category}`);
+  return entries;
+}
+
 // ─── copy metadata ────────────────────────────────────────────────────────────
 
 interface TokenMeta {
@@ -139,36 +210,56 @@ function syncMetadata() {
       ? (JSON.parse(readFileSync(customPath, "utf8")) as TokenMeta[])
       : [];
 
+    let merged: TokenMeta[];
     if (custom.length > 0) {
       const customIds = new Set(custom.map((e) => e.id));
       // upstream entries not overridden by custom + all custom entries at the end
-      const merged = [...upstream.filter((e) => !customIds.has(e.id)), ...custom];
-      writeFileSync(dest, JSON.stringify(merged, null, 2), "utf8");
+      merged = [...upstream.filter((e) => !customIds.has(e.id)), ...custom];
       console.log(`  maps/${category}.json  (${upstream.length} upstream + ${custom.length} custom = ${merged.length})`);
     } else {
-      writeFileSync(dest, JSON.stringify(upstream, null, 2), "utf8");
+      merged = upstream;
       console.log(`  maps/${category}.json  (${upstream.length} entries)`);
     }
+
+    // Resolve cross-type filePath references: copy SVG from source category
+    // into this category's asset dir, rewrite filePath to own-type:id.
+    merged = fixCrossTypeIcons(category, merged);
+
+    writeFileSync(dest, JSON.stringify(merged), "utf8");
   }
 }
 
 // ─── merge aliases ────────────────────────────────────────────────────────────
-// Source of truth: aliases/{category}.json (committed)
-// Output (generated): packages/core/src/aliases/{category}.json (gitignored)
+// For tokens: auto-generate id→symbol aliases from maps/tokens.json
+//   (tokens SVGs are named by symbol, so users who pass id need an alias)
+// For other categories: read aliases/{category}.json (manually maintained)
+// Writes both aliases/{category}.json (committed) and the merged result.
 
 function mergeAliases() {
-  const outDir = join("packages/core/src/aliases");
-  mkdirSync(outDir, { recursive: true });
+  mkdirSync("aliases", { recursive: true });
 
   for (const category of CATEGORIES) {
     const basePath = join("aliases", `${category}.json`);
-    const outPath = join(outDir, `${category}.json`);
 
     const base: Record<string, string> = existsSync(basePath)
       ? JSON.parse(readFileSync(basePath, "utf8"))
       : {};
 
-    writeFileSync(outPath, JSON.stringify(base, null, 2), "utf8");
+    if (category === "tokens") {
+      // Auto-generate: id.lower() → symbol.lower() for entries where they differ
+      const mapsPath = join("maps", "tokens.json");
+      if (existsSync(mapsPath)) {
+        const entries = JSON.parse(readFileSync(mapsPath, "utf8")) as TokenMeta[];
+        for (const e of entries) {
+          const sym = (e.symbol as string | undefined)?.toLowerCase();
+          const id = e.id.toLowerCase();
+          if (sym && sym !== id) base[id] = sym;
+        }
+      }
+      // Write back to aliases/tokens.json so it stays committed and up-to-date
+      writeFileSync(basePath, JSON.stringify(base), "utf8");
+    }
+
     console.log(`  aliases/${category}.json  (${Object.keys(base).length} entries)`);
   }
 }
@@ -181,30 +272,46 @@ function mergeAliases() {
 interface RGBColor { r: number; g: number; b: number; }
 
 async function extractColors() {
-  const colorsPath = join("maps", "colors.json");
-  const existing: Record<string, RGBColor> = existsSync(colorsPath)
-    ? JSON.parse(readFileSync(colorsPath, "utf8"))
-    : {};
-
-  // Normalize any legacy uppercase keys to lowercase
-  const colors: Record<string, RGBColor> = Object.fromEntries(
-    Object.entries(existing).map(([k, v]) => [k.toLowerCase(), v])
-  );
-  let updated = 0;
+  // Each category gets its own colors/{category}.json file.
+  // Keys are the bare icon name (lowercase), matching the SVG filename stem.
+  mkdirSync("colors", { recursive: true });
+  let totalUpdated = 0;
 
   for (const category of CATEGORIES) {
-    const brandedDir = join("assets", category, "branded");
-    if (!existsSync(brandedDir)) continue;
+    const colorFile = join("colors", `${category}.json`);
+    const existing: Record<string, RGBColor> = existsSync(colorFile)
+      ? JSON.parse(readFileSync(colorFile, "utf8"))
+      : {};
 
-    const files = readdirSync(brandedDir).filter((f) => f.endsWith(".svg"));
-    for (const file of files) {
-      const name = file.replace(/\.svg$/, "").toLowerCase();
-      const key = `${category}/${name}`;
+    // Normalize any legacy uppercase keys to lowercase
+    const colors: Record<string, RGBColor> = Object.fromEntries(
+      Object.entries(existing).map(([k, v]) => [k.toLowerCase(), v])
+    );
+    let updated = 0;
 
-      // Skip if already extracted and SVG hasn't been modified
-      if (!FORCE && existing[key]) continue;
+    // Collect all icon names across variants (branded > background > mono)
+    const variantOrder = ["branded", "background", "mono"] as const;
+    const allNames = new Set<string>();
+    for (const variant of variantOrder) {
+      const dir = join("assets", category, variant);
+      if (existsSync(dir)) {
+        for (const f of readdirSync(dir)) {
+          if (f.endsWith(".svg")) allNames.add(f.replace(/\.svg$/, "").toLowerCase());
+        }
+      }
+    }
 
-      const svgPath = join(brandedDir, file);
+    for (const name of allNames) {
+      // Skip if already extracted (use --force to re-extract all)
+      if (!FORCE && colors[name]) continue;
+
+      // Prefer branded, fall back to background, then mono
+      let svgPath: string | null = null;
+      for (const variant of variantOrder) {
+        const candidate = join("assets", category, variant, `${name}.svg`);
+        if (existsSync(candidate)) { svgPath = candidate; break; }
+      }
+      if (!svgPath) continue;
       try {
         const buf = readFileSync(svgPath);
         // Rasterize to RGBA, average the color of non-transparent pixels.
@@ -221,7 +328,7 @@ async function extractColors() {
           if (data[i + 3] > 64) { r += data[i]; g += data[i + 1]; bl += data[i + 2]; count++; }
         }
         if (count > 0) {
-          colors[key] = {
+          colors[name] = {
             r: Math.round(r / count),
             g: Math.round(g / count),
             b: Math.round(bl / count),
@@ -232,11 +339,13 @@ async function extractColors() {
         // SVG may have features sharp can't rasterize — skip silently
       }
     }
-    console.log(`  ${category.padEnd(12)} ${files.length} icons`);
+
+    writeFileSync(colorFile, JSON.stringify(colors), "utf8");
+    console.log(`  colors/${category}.json  (${Object.keys(colors).length} total, ${updated} new)`);
+    totalUpdated += updated;
   }
 
-  writeFileSync(colorsPath, JSON.stringify(colors, null, 2), "utf8");
-  console.log(`  maps/colors.json  (${Object.keys(colors).length} total, ${updated} updated)`);
+  console.log(`  Total colors updated: ${totalUpdated}`);
 }
 
 // ─── main ─────────────────────────────────────────────────────────────────────
