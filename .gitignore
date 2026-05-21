@@ -1,0 +1,10 @@
+node_modules/
+*.log
+
+# build output
+dist/
+packages/*/dist/
+packages/core/src/aliases/
+
+# bun lockfiles at package level (keep root bun.lock)
+packages/*/bun.lock

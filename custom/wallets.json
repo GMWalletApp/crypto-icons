@@ -1,0 +1,12 @@
+[
+  {
+    "id": "okpay",
+    "filePath": "wallet:okpay",
+    "name": "OKPay",
+    "variants": [
+      "branded",
+      "mono",
+      "background"
+    ]
+  }
+]

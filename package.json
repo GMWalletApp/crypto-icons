@@ -1,0 +1,30 @@
+{
+  "name": "@gmwalletapp/crypto-icons-workspace",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "bun run --filter '*' build",
+    "sync": "bun scripts/sync-web3icons.ts",
+    "sync:force": "bun scripts/sync-web3icons.ts --force",
+    "semantic-release": "semantic-release"
+  },
+  "devDependencies": {
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^10.0.0",
+    "@semantic-release/npm": "^13.1.5",
+    "semantic-release": "^25.0.3",
+    "typescript": "^5.5.3"
+  },
+  "engines": {
+    "bun": ">=1.0.0"
+  },
+  "keywords": ["crypto", "icons", "web3", "svg", "cdn"],
+  "dependencies": {
+    "sharp": "^0.34.5"
+  }
+}

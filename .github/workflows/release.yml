@@ -1,0 +1,48 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - '.github/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+  packages: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, '[skip ci]')"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ github.token }}
+          fetch-depth: 0
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@GMWalletApp'
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Build packages
+        run: bun run build
+
+      - name: Semantic Release
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          NODE_AUTH_TOKEN: ${{ github.token }}
+          NPM_TOKEN: ${{ github.token }}
+        run: bun run semantic-release

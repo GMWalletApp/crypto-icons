@@ -1,0 +1,42 @@
+{
+  "name": "@gmwalletapp/crypto-icons",
+  "version": "0.0.0",
+  "description": "Web3 SVG icon CDN loader — tokens, networks, exchanges, wallets. Multi-CDN with China-optimized fallback.",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./aliases/networks": "./src/aliases/networks.json",
+    "./aliases/tokens": "./src/aliases/tokens.json",
+    "./aliases/exchanges": "./src/aliases/exchanges.json",
+    "./aliases/wallets": "./src/aliases/wallets.json"
+  },
+  "files": ["dist", "src/aliases", "README.md", "LICENSE"],
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsup src/index.ts --format esm,cjs --dts --clean",
+    "dev": "tsup src/index.ts --format esm,cjs --dts --watch",
+    "typecheck": "tsc --noEmit"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
+    "access": "public"
+  },
+  "keywords": ["crypto", "icons", "web3", "svg", "cdn", "tokens", "networks", "exchanges", "wallets"],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/GMWalletApp/crypto-icons.git",
+    "directory": "packages/core"
+  },
+  "devDependencies": {
+    "tsup": "^8.5.1",
+    "typescript": "^6.0.3"
+  }
+}
