@@ -1,6 +1,6 @@
 {
   "name": "@gmwalletapp/crypto-icons-react",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "React component for crypto icons — tokens, networks, exchanges, wallets via CDN",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -13,7 +13,9 @@
       "require": "./dist/index.cjs"
     }
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "sideEffects": false,
   "scripts": {
     "build": "tsup src/index.tsx --format esm,cjs --dts --clean",
@@ -36,7 +38,15 @@
     "registry": "https://npm.pkg.github.com",
     "access": "public"
   },
-  "keywords": ["crypto", "icons", "web3", "react", "svg", "tokens", "networks"],
+  "keywords": [
+    "crypto",
+    "icons",
+    "web3",
+    "react",
+    "svg",
+    "tokens",
+    "networks"
+  ],
   "license": "MIT",
   "repository": {
     "type": "git",
