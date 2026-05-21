@@ -8,154 +8,153 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --bg: #111;
-  --panel: #181818;
-  --line: #252525;
-  --text: #e2e2e2;
+  --bg: #0e0e0e;
+  --surface: #161616;
+  --border: #222;
+  --text: #ddd;
   --muted: #555;
-  --accent: #6366f1;
-  --radius: 8px;
-  --sz: 48px;
+  --accent: #5b6ef5;
+  --sz: 44px;
+  --font: ui-sans-serif, system-ui, -apple-system, sans-serif;
 }
 
 body {
   background: var(--bg);
   color: var(--text);
-  font-family: ui-sans-serif, system-ui, sans-serif;
-  font-size: 14px;
+  font-family: var(--font);
+  font-size: 13px;
   height: 100vh;
   display: flex;
   flex-direction: column;
   overflow: hidden;
 }
 
-/* ── top bar ── */
+/* nav */
 nav {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 10px 16px;
-  border-bottom: 1px solid var(--line);
+  padding: 9px 14px;
+  border-bottom: 1px solid var(--border);
   flex-shrink: 0;
 }
 
-.wordmark { font-weight: 600; font-size: 15px; letter-spacing: -.2px; white-space: nowrap; }
-.wordmark em { color: var(--accent); font-style: normal; }
+.logo { font-size: 14px; font-weight: 600; letter-spacing: -.3px; white-space: nowrap; opacity: .9; }
+.logo span { color: var(--accent); }
 
-.search {
-  flex: 1;
-  max-width: 360px;
-  position: relative;
-}
-.search input {
+.search-wrap { position: relative; flex: 1; max-width: 300px; }
+.search-wrap svg { position: absolute; left: 8px; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; }
+#q {
   width: 100%;
-  background: var(--panel);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
   color: var(--text);
-  padding: 7px 10px 7px 32px;
-  font-size: 13px;
+  padding: 6px 10px 6px 28px;
+  font: inherit;
   outline: none;
 }
-.search input:focus { border-color: var(--accent); }
-.search input::placeholder { color: var(--muted); }
-.search svg { position: absolute; left: 9px; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; }
+#q:focus { border-color: var(--accent); }
+#q::placeholder { color: var(--muted); }
 
-.nav-right { display: flex; align-items: center; gap: 10px; margin-left: auto; }
-
-.tabs {
+.seg {
   display: flex;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  border-radius: 6px;
   overflow: hidden;
 }
-.tabs button {
+.seg button {
   background: none;
   border: none;
+  border-right: 1px solid var(--border);
   color: var(--muted);
-  padding: 6px 12px;
-  font-size: 13px;
+  padding: 5px 11px;
+  font: inherit;
   cursor: pointer;
-  border-right: 1px solid var(--line);
-  transition: color .1s, background .1s;
+  white-space: nowrap;
 }
-.tabs button:last-child { border-right: none; }
-.tabs button.on { background: var(--accent); color: #fff; }
-.tabs button:not(.on):hover { color: var(--text); }
+.seg button:last-child { border-right: none; }
+.seg button.on { background: var(--accent); color: #fff; }
+.seg button:not(.on):hover { color: var(--text); }
 
-.size-row {
+.szsplit {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   color: var(--muted);
 }
-.size-row input[type=range] { width: 72px; accent-color: var(--accent); }
+.szsplit input[type=range] { width: 68px; accent-color: var(--accent); cursor: pointer; }
 
-.count { color: var(--muted); font-size: 12px; white-space: nowrap; }
+#cnt { color: var(--muted); font-size: 12px; margin-left: auto; white-space: nowrap; }
 
-/* ── body ── */
-.body {
+/* layout */
+.layout {
   display: flex;
   flex: 1;
-  overflow: hidden;
+  min-height: 0;
 }
 
-/* ── sidebar ── */
+/* sidebar */
 aside {
-  width: 156px;
+  width: 148px;
   flex-shrink: 0;
-  border-right: 1px solid var(--line);
-  padding: 8px 6px;
+  border-right: 1px solid var(--border);
+  padding: 6px;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 1px;
 }
 
-.cat {
+.cat-btn {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  padding: 8px 10px;
-  border-radius: 6px;
-  cursor: pointer;
-  border: none;
+  align-items: center;
+  padding: 7px 9px;
+  border-radius: 5px;
   background: none;
+  border: none;
   color: var(--muted);
+  font: inherit;
+  cursor: pointer;
   width: 100%;
   text-align: left;
-  font-size: 13px;
-  transition: color .1s, background .1s;
 }
-.cat:hover { color: var(--text); background: var(--panel); }
-.cat.on { color: var(--text); background: var(--panel); font-weight: 500; }
-.cat .n { font-size: 11px; }
+.cat-btn:hover { color: var(--text); background: var(--surface); }
+.cat-btn.on { color: var(--text); background: var(--surface); font-weight: 500; }
+.cat-btn .n { font-size: 11px; }
 
-/* ── grid ── */
-main {
-  flex: 1;
-  overflow-y: auto;
-  padding: 14px;
-}
+/* scroll area */
+main { flex: 1; overflow-y: auto; padding: 12px; }
 
 #grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(calc(var(--sz) + 56px), 1fr));
-  gap: 6px;
+  grid-template-columns: repeat(auto-fill, minmax(calc(var(--sz) + 58px), 1fr));
+  gap: 5px;
 }
 
 .card {
-  background: var(--panel);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  padding: 14px 8px 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  padding: 13px 8px 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 7px;
+  gap: 6px;
   cursor: pointer;
-  transition: border-color .12s;
+  transition: border-color .1s;
+  position: relative;
+  overflow: hidden;
 }
-.card:hover { border-color: var(--accent); }
+.card::before {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--ic, transparent);
+}
+.card:hover { border-color: #444; }
+.card:hover::before { opacity: 1; }
 
 .card img {
   width: var(--sz);
@@ -163,172 +162,198 @@ main {
   object-fit: contain;
   display: block;
 }
-.card img.err { opacity: .15; }
-
 .card .sym {
   font-size: 12px;
   font-weight: 600;
-  text-align: center;
   max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  text-align: center;
 }
-.card .label {
+.card .nm {
   font-size: 11px;
   color: var(--muted);
-  text-align: center;
   max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  text-align: center;
   width: 100%;
 }
-
-.empty {
-  grid-column: 1/-1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 200px;
-  color: var(--muted);
+.card .aliases {
+  font-size: 10px;
+  color: #3b3b3b;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: center;
+  width: 100%;
 }
+.card:hover .aliases { color: #555; }
 
-/* ── modal ── */
-.overlay {
+.empty { grid-column: 1/-1; text-align: center; padding: 80px 20px; color: var(--muted); }
+
+/* modal */
+.ov {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,.65);
-  backdrop-filter: blur(3px);
-  z-index: 50;
+  background: rgba(0,0,0,.7);
+  backdrop-filter: blur(4px);
+  z-index: 100;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 24px;
+  padding: 20px;
 }
-.overlay.hide { display: none; }
+.ov.hide { display: none; }
 
 .modal {
-  background: var(--panel);
-  border: 1px solid var(--line);
-  border-radius: 12px;
+  background: var(--surface);
+  border: 1px solid #2a2a2a;
+  border-radius: 10px;
   width: 100%;
-  max-width: 520px;
-  max-height: 85vh;
+  max-width: 500px;
+  max-height: 88vh;
   overflow-y: auto;
 }
 
-.mhead {
+.mhd {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 18px 20px 14px;
-  border-bottom: 1px solid var(--line);
+  padding: 16px 18px 12px;
+  border-bottom: 1px solid var(--border);
 }
-.mhead h2 { font-size: 16px; font-weight: 600; }
-.mclose {
+.mhd h2 { font-size: 15px; font-weight: 600; }
+.mcl {
   background: none;
-  border: 1px solid var(--line);
+  border: 1px solid var(--border);
   color: var(--muted);
-  width: 28px;
-  height: 28px;
-  border-radius: 6px;
+  width: 26px; height: 26px;
+  border-radius: 5px;
   cursor: pointer;
-  font-size: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  font-size: 14px;
 }
-.mclose:hover { color: var(--text); }
+.mcl:hover { color: var(--text); }
 
-.mbody { padding: 18px 20px; display: flex; flex-direction: column; gap: 16px; }
+.mbd { padding: 16px 18px; display: flex; flex-direction: column; gap: 14px; }
 
-.sec-title { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 8px; }
+.sec { }
+.sec-t { font-size: 10px; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); margin-bottom: 8px; }
 
-.vgrid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
-.vcard {
+.vg { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; }
+.vc {
   background: var(--bg);
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  padding: 14px 10px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  padding: 12px 8px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 7px;
 }
-.vcard img { width: 56px; height: 56px; object-fit: contain; }
-.vcard .vl { font-size: 11px; color: var(--muted); }
-.vcard.na { opacity: .25; }
-.vcard .vph { width: 56px; height: 56px; background: var(--line); border-radius: 6px; }
+.vc img { width: 52px; height: 52px; object-fit: contain; }
+.vc .vl { font-size: 10px; color: var(--muted); }
+.vc.na { opacity: .22; }
+.vc .ph { width: 52px; height: 52px; background: #1e1e1e; border-radius: 5px; }
 
-.mgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
-.mfield { background: var(--bg); border-radius: 6px; padding: 9px 11px; }
-.mfield .fk { font-size: 11px; color: var(--muted); margin-bottom: 2px; }
-.mfield .fv { font-size: 13px; word-break: break-all; }
+.fields { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
+.field { background: var(--bg); border-radius: 5px; padding: 8px 10px; }
+.field .fk { font-size: 10px; color: var(--muted); margin-bottom: 2px; }
+.field .fv { font-size: 12px; word-break: break-all; }
+
+.aliases-row {
+  background: var(--bg);
+  border-radius: 5px;
+  padding: 8px 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.atag {
+  background: #1e1e1e;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 2px 6px;
+  font-size: 11px;
+  color: #888;
+}
+
+.colorbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--bg);
+  border-radius: 5px;
+  padding: 8px 10px;
+}
+.colorswatch { width: 24px; height: 24px; border-radius: 4px; flex-shrink: 0; }
+.colorhex { font-size: 12px; font-family: ui-monospace, monospace; }
+.colorrgb { font-size: 11px; color: var(--muted); }
 
 .urlrow {
   display: flex;
   align-items: center;
   gap: 8px;
   background: var(--bg);
-  border-radius: 6px;
-  padding: 9px 11px;
+  border-radius: 5px;
+  padding: 8px 10px;
 }
 .urlrow code { flex: 1; font-size: 11px; color: var(--muted); word-break: break-all; font-family: ui-monospace, monospace; }
 .cpbtn {
   flex-shrink: 0;
-  background: var(--accent);
-  border: none;
-  color: #fff;
-  padding: 4px 10px;
-  border-radius: 5px;
+  background: #1e1e1e;
+  border: 1px solid var(--border);
+  color: #aaa;
+  padding: 3px 9px;
+  border-radius: 4px;
   cursor: pointer;
-  font-size: 12px;
+  font-size: 11px;
 }
-.cpbtn:hover { opacity: .85; }
+.cpbtn:hover { color: var(--text); }
 </style>
 </head>
 <body>
 
 <nav>
-  <div class="wordmark">crypto<em>-icons</em></div>
-  <div class="search">
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-    <input id="q" placeholder="Search…" autocomplete="off" spellcheck="false">
+  <div class="logo">crypto<span>-icons</span></div>
+  <div class="search-wrap">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <input id="q" placeholder="Search icons…" autocomplete="off" spellcheck="false">
   </div>
-  <div class="nav-right">
-    <div class="tabs" id="vtabs">
-      <button class="on" data-v="branded">Branded</button>
-      <button data-v="mono">Mono</button>
-      <button data-v="background">BG</button>
-    </div>
-    <div class="size-row">
-      <svg width="11" height="11" viewBox="0 0 10 10" fill="currentColor"><rect width="10" height="10" rx="2"/></svg>
-      <input id="sz" type="range" min="28" max="96" value="48">
-      <svg width="16" height="16" viewBox="0 0 10 10" fill="currentColor"><rect width="10" height="10" rx="2"/></svg>
-    </div>
-    <span class="count" id="cnt"></span>
+  <div class="seg" id="vtabs">
+    <button class="on" data-v="branded">Branded</button>
+    <button data-v="mono">Mono</button>
+    <button data-v="background">BG</button>
   </div>
+  <div class="szsplit">
+    <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor"><rect width="10" height="10" rx="2"/></svg>
+    <input id="sz" type="range" min="24" max="96" value="44">
+    <svg width="15" height="15" viewBox="0 0 10 10" fill="currentColor"><rect width="10" height="10" rx="2"/></svg>
+  </div>
+  <span id="cnt"></span>
 </nav>
 
-<div class="body">
+<div class="layout">
   <aside>
-    <button class="cat on" data-cat="all">All <span class="n" id="n-all"></span></button>
-    <button class="cat" data-cat="tokens">Tokens <span class="n" id="n-tokens"></span></button>
-    <button class="cat" data-cat="networks">Networks <span class="n" id="n-networks"></span></button>
-    <button class="cat" data-cat="exchanges">Exchanges <span class="n" id="n-exchanges"></span></button>
-    <button class="cat" data-cat="wallets">Wallets <span class="n" id="n-wallets"></span></button>
+    <button class="cat-btn on" data-cat="all">All <span class="n" id="n-all"></span></button>
+    <button class="cat-btn" data-cat="tokens">Tokens <span class="n" id="n-tokens"></span></button>
+    <button class="cat-btn" data-cat="networks">Networks <span class="n" id="n-networks"></span></button>
+    <button class="cat-btn" data-cat="exchanges">Exchanges <span class="n" id="n-exchanges"></span></button>
+    <button class="cat-btn" data-cat="wallets">Wallets <span class="n" id="n-wallets"></span></button>
   </aside>
   <main><div id="grid"></div></main>
 </div>
 
-<div class="overlay hide" id="ov">
+<div class="ov hide" id="ov">
   <div class="modal">
-    <div class="mhead">
+    <div class="mhd">
       <h2 id="mtitle"></h2>
-      <button class="mclose" id="mclose">✕</button>
+      <button class="mcl" id="mcl">✕</button>
     </div>
-    <div class="mbody" id="mbody"></div>
+    <div class="mbd" id="mbd"></div>
   </div>
 </div>
 
@@ -341,7 +366,11 @@ let visible = [];
 let variant = 'branded';
 let cat = 'all';
 
-function url(category, v, name) {
+// colors & aliases per category
+const colors = {};   // colors[cat][key] = {r,g,b}
+const aliasMap = {}; // aliasMap[cat][canonical_id] = [alias, ...]
+
+function svgUrl(category, v, name) {
   return `${CDN}/assets/${category}/${v}/${name}.svg`;
 }
 
@@ -349,16 +378,57 @@ function fname(filePath) {
   return filePath.split(':').pop().toLowerCase();
 }
 
+function rgbToHex(r, g, b) {
+  return '#' + [r,g,b].map(x => x.toString(16).padStart(2,'0')).join('');
+}
+
 async function init() {
-  const maps = await Promise.all(
-    CATS.map(c => fetch(`${CDN}/maps/${c}.json`).then(r => r.json()).catch(() => []))
-  );
+  const fetches = [
+    ...CATS.map(c => fetch(`${CDN}/maps/${c}.json`).then(r => r.json()).catch(() => [])),
+    ...CATS.map(c => fetch(`${CDN}/colors/${c}.json`).then(r => r.json()).catch(() => ({}))),
+    ...CATS.map(c => fetch(`${CDN}/aliases/${c}.json`).then(r => r.json()).catch(() => ({}))),
+  ];
+  const results = await Promise.all(fetches);
+
+  const maps    = results.slice(0, 4);
+  const colData = results.slice(4, 8);
+  const aliData = results.slice(8, 12);
+
   CATS.forEach((c, i) => {
-    maps[i].forEach(item => all.push({ ...item, _cat: c, _file: fname(item.filePath) }));
+    colors[c] = colData[i];
+
+    // build reverse alias map: canonical_id -> [alias, ...]
+    aliasMap[c] = {};
+    const raw = aliData[i];
+    Object.entries(raw).forEach(([alias, canonical]) => {
+      if (!aliasMap[c][canonical]) aliasMap[c][canonical] = [];
+      if (alias !== canonical) aliasMap[c][canonical].push(alias);
+    });
+
+    maps[i].forEach(item => {
+      all.push({ ...item, _cat: c, _file: fname(item.filePath) });
+    });
     document.getElementById('n-' + c).textContent = maps[i].length;
   });
   document.getElementById('n-all').textContent = all.length;
+
   filter();
+}
+
+function getColor(item) {
+  const col = colors[item._cat];
+  if (!col) return null;
+  // tokens: keyed by symbol (lowercase); others: by id
+  const key = item._cat === 'tokens'
+    ? (item.symbol || item.id || '').toLowerCase()
+    : (item.id || '').toLowerCase();
+  return col[key] || null;
+}
+
+function getAliases(item) {
+  const am = aliasMap[item._cat];
+  if (!am) return [];
+  return am[item.id] || [];
 }
 
 function filter() {
@@ -366,36 +436,49 @@ function filter() {
   visible = all.filter(item => {
     if (cat !== 'all' && item._cat !== cat) return false;
     if (q) {
-      const h = (item.symbol || '') + ' ' + (item.name || '') + ' ' + (item.id || '');
-      if (!h.toLowerCase().includes(q)) return false;
+      const aliases = getAliases(item).join(' ');
+      const haystack = [item.symbol, item.name, item.id, aliases].filter(Boolean).join(' ').toLowerCase();
+      if (!haystack.includes(q)) return false;
     }
     return true;
   });
-  document.getElementById('cnt').textContent = visible.length.toLocaleString();
+  document.getElementById('cnt').textContent = visible.length.toLocaleString() + ' icons';
   render();
 }
 
 function render() {
   const grid = document.getElementById('grid');
+
   if (!visible.length) {
     grid.innerHTML = '<div class="empty">No results</div>';
     return;
   }
 
-  // Build all cards at once — images lazy-load
   const frag = document.createDocumentFragment();
   visible.forEach((item, i) => {
     const v = item.variants.includes(variant) ? variant : item.variants[0];
-    const u = url(item._cat, v, item._file);
+    const u = svgUrl(item._cat, v, item._file);
     const sym = (item.symbol || item.id || '').toUpperCase();
     const name = item.name || item.id;
+    const col = getColor(item);
+    const alts = getAliases(item);
 
     const card = document.createElement('div');
     card.className = 'card';
+    if (col) {
+      card.style.setProperty('--ic', `rgb(${col.r},${col.g},${col.b})`);
+    }
+
+    let aliHtml = '';
+    if (alts.length) {
+      aliHtml = `<div class="aliases">${alts.slice(0,3).join(', ')}${alts.length > 3 ? '…' : ''}</div>`;
+    }
+
     card.innerHTML = `
-      <img src="${u}" alt="${sym}" loading="lazy" onerror="this.classList.add('err')">
+      <img src="${u}" alt="${sym}" loading="lazy" onerror="this.style.opacity='.1'">
       <div class="sym">${sym}</div>
-      <div class="label">${name}</div>`;
+      <div class="nm">${name}</div>
+      ${aliHtml}`;
     card.onclick = () => openModal(i);
     frag.appendChild(card);
   });
@@ -406,53 +489,93 @@ function render() {
 
 function openModal(i) {
   const item = visible[i];
+  const col = getColor(item);
+  const alts = getAliases(item);
+
   document.getElementById('mtitle').textContent = item.name || item.id;
 
-  const variants = ['branded','mono','background'];
-  const vcards = variants.map(v => {
+  // variants
+  const VARIANTS = ['branded','mono','background'];
+  const vcards = VARIANTS.map(v => {
     const has = item.variants.includes(v);
-    const u = url(item._cat, v, item._file);
-    return `<div class="vcard ${has?'':'na'}">
-      ${has ? `<img src="${u}" alt="${v}" loading="lazy">` : '<div class="vph"></div>'}
+    return `<div class="vc ${has?'':'na'}">
+      ${has
+        ? `<img src="${svgUrl(item._cat, v, item._file)}" alt="${v}" loading="lazy">`
+        : `<div class="ph"></div>`}
       <span class="vl">${v}</span>
     </div>`;
   }).join('');
 
-  const fields = [
+  // fields
+  const defs = [
     ['Category', item._cat],
     ['ID', item.id],
-    item.symbol ? ['Symbol', item.symbol.toUpperCase()] : null,
-    item.chainId ? ['Chain ID', item.chainId] : null,
-    item.caip2id ? ['CAIP-2', item.caip2id] : null,
-    item.type ? ['Type', item.type] : null,
+    item.symbol   ? ['Symbol', item.symbol.toUpperCase()] : null,
+    item.chainId  ? ['Chain ID', item.chainId] : null,
+    item.caip2id  ? ['CAIP-2', item.caip2id] : null,
+    item.type     ? ['Type', item.type] : null,
     item.marketCapRank ? ['Market Cap Rank', '#' + item.marketCapRank] : null,
-  ].filter(Boolean).map(([k,v]) =>
-    `<div class="mfield"><div class="fk">${k}</div><div class="fv">${v}</div></div>`
+  ].filter(Boolean);
+  const fieldsHtml = defs.map(([k,v]) =>
+    `<div class="field"><div class="fk">${k}</div><div class="fv">${v}</div></div>`
   ).join('');
 
-  const cu = url(item._cat, variant, item._file);
-  const urlRow = `<div class="urlrow"><code>${cu}</code><button class="cpbtn" onclick="cp('${cu}',this)">Copy</button></div>`;
+  // aliases
+  const aliHtml = alts.length
+    ? `<div class="sec">
+        <div class="sec-t">Aliases</div>
+        <div class="aliases-row">${alts.map(a => `<span class="atag">${a}</span>`).join('')}</div>
+      </div>`
+    : '';
 
-  const addrs = item.addresses && Object.keys(item.addresses).length
-    ? `<div><div class="sec-title">Contract addresses</div>
-        ${Object.entries(item.addresses).map(([chain, addr]) =>
-          `<div class="urlrow" style="margin-top:6px"><code><b style="color:var(--text)">${chain}</b>  ${addr}</code><button class="cpbtn" onclick="cp('${addr}',this)">Copy</button></div>`
-        ).join('')}
-      </div>` : '';
+  // color
+  let colorHtml = '';
+  if (col) {
+    const hex = rgbToHex(col.r, col.g, col.b);
+    colorHtml = `<div class="sec">
+      <div class="sec-t">Brand Color</div>
+      <div class="colorbar">
+        <div class="colorswatch" style="background:${hex}"></div>
+        <span class="colorhex">${hex.toUpperCase()}</span>
+        <span class="colorrgb">rgb(${col.r}, ${col.g}, ${col.b})</span>
+      </div>
+    </div>`;
+  }
 
-  document.getElementById('mbody').innerHTML = `
-    <div><div class="sec-title">Variants</div><div class="vgrid">${vcards}</div></div>
-    <div><div class="sec-title">Details</div><div class="mgrid">${fields}</div></div>
-    <div><div class="sec-title">CDN URL (${variant})</div>${urlRow}</div>
-    ${addrs}`;
+  // url
+  const cu = svgUrl(item._cat, variant, item._file);
+
+  // addresses
+  let addrHtml = '';
+  if (item.addresses && Object.keys(item.addresses).length) {
+    const rows = Object.entries(item.addresses).map(([chain, addr]) =>
+      `<div class="urlrow">
+        <code><b style="color:var(--text)">${chain}</b>&nbsp;&nbsp;${addr}</code>
+        <button class="cpbtn" onclick="cp('${addr}',this)">Copy</button>
+      </div>`
+    ).join('');
+    addrHtml = `<div class="sec"><div class="sec-t">Contract Addresses</div>${rows}</div>`;
+  }
+
+  document.getElementById('mbd').innerHTML = `
+    <div class="sec"><div class="sec-t">Variants</div><div class="vg">${vcards}</div></div>
+    <div class="sec"><div class="sec-t">Details</div><div class="fields">${fieldsHtml}</div></div>
+    ${aliHtml}
+    ${colorHtml}
+    <div class="sec">
+      <div class="sec-t">CDN URL (${variant})</div>
+      <div class="urlrow"><code>${cu}</code><button class="cpbtn" onclick="cp('${cu}',this)">Copy</button></div>
+    </div>
+    ${addrHtml}`;
 
   document.getElementById('ov').classList.remove('hide');
 }
 
 function cp(text, btn) {
-  navigator.clipboard.writeText(text);
+  navigator.clipboard.writeText(text).catch(() => {});
+  const orig = btn.textContent;
   btn.textContent = '✓';
-  setTimeout(() => btn.textContent = 'Copy', 1200);
+  setTimeout(() => btn.textContent = orig, 1200);
 }
 
 // events
@@ -461,8 +584,8 @@ document.getElementById('sz').addEventListener('input', e => {
   document.documentElement.style.setProperty('--sz', e.target.value + 'px');
 });
 
-document.querySelectorAll('.cat').forEach(b => b.addEventListener('click', () => {
-  document.querySelectorAll('.cat').forEach(x => x.classList.remove('on'));
+document.querySelectorAll('.cat-btn').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('.cat-btn').forEach(x => x.classList.remove('on'));
   b.classList.add('on');
   cat = b.dataset.cat;
   filter();
@@ -475,8 +598,8 @@ document.querySelectorAll('#vtabs button').forEach(b => b.addEventListener('clic
   render();
 }));
 
-document.getElementById('mclose').onclick = () => document.getElementById('ov').classList.add('hide');
-document.getElementById('ov').addEventListener('click', e => { if (e.target === e.currentTarget) e.currentTarget.classList.add('hide'); });
+document.getElementById('mcl').onclick = () => document.getElementById('ov').classList.add('hide');
+document.getElementById('ov').addEventListener('click', e => { if (e.target === e.currentTarget) e.target.classList.add('hide'); });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') document.getElementById('ov').classList.add('hide'); });
 
 init();
