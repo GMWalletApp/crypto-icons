@@ -45,4 +45,4 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
           NODE_AUTH_TOKEN: ${{ github.token }}
           NPM_TOKEN: ${{ github.token }}
-        run: bun run semantic-release
+        run: npx --no -- semantic-release
