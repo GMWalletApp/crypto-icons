@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>crypto-icons · Preview</title>
+<style>
+  :root {
+    --bg: #0d0d0d;
+    --surface: #161616;
+    --surface2: #1e1e1e;
+    --border: #2a2a2a;
+    --text: #e8e8e8;
+    --text-muted: #666;
+    --accent: #7c6af7;
+    --accent2: #5eead4;
+    --danger: #f87171;
+    --radius: 10px;
+    --icon-size: 48px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+
+  /* Header */
+  header { display: flex; align-items: center; gap: 16px; padding: 14px 20px; border-bottom: 1px solid var(--border); background: var(--surface); flex-shrink: 0; }
+  .logo { font-size: 18px; font-weight: 700; white-space: nowrap; }
+  .logo span { color: var(--accent); }
+  .search-wrap { flex: 1; position: relative; max-width: 400px; }
+  .search-wrap svg { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); opacity: .4; pointer-events: none; }
+  #search { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; color: var(--text); padding: 8px 12px 8px 34px; font-size: 14px; outline: none; }
+  #search:focus { border-color: var(--accent); }
+  #search::placeholder { color: var(--text-muted); }
+  .controls { display: flex; align-items: center; gap: 10px; margin-left: auto; }
+  .btn-group { display: flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+  .btn-group button { background: var(--surface2); border: none; color: var(--text-muted); padding: 7px 13px; font-size: 13px; cursor: pointer; transition: all .15s; white-space: nowrap; }
+  .btn-group button.active { background: var(--accent); color: #fff; }
+  .btn-group button:hover:not(.active) { background: var(--border); color: var(--text); }
+  .size-control { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-muted); }
+  #size-slider { accent-color: var(--accent); width: 80px; }
+  .badge { background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 5px 10px; font-size: 12px; color: var(--text-muted); }
+  #count-badge { font-variant-numeric: tabular-nums; }
+
+  /* Layout */
+  .layout { display: flex; flex: 1; overflow: hidden; }
+
+  /* Sidebar */
+  aside { width: 180px; flex-shrink: 0; border-right: 1px solid var(--border); background: var(--surface); padding: 12px 8px; display: flex; flex-direction: column; gap: 4px; overflow-y: auto; }
+  .cat-btn { display: flex; align-items: center; justify-content: space-between; padding: 9px 12px; border-radius: 8px; cursor: pointer; font-size: 14px; border: none; background: transparent; color: var(--text-muted); width: 100%; text-align: left; transition: all .15s; }
+  .cat-btn:hover { background: var(--surface2); color: var(--text); }
+  .cat-btn.active { background: var(--accent); color: #fff; }
+  .cat-btn .cat-count { font-size: 11px; opacity: .7; }
+  .cat-icon { margin-right: 8px; font-size: 16px; }
+  aside hr { border: none; border-top: 1px solid var(--border); margin: 6px 0; }
+  .sidebar-label { font-size: 11px; color: var(--text-muted); padding: 4px 12px; text-transform: uppercase; letter-spacing: .06em; }
+
+  /* Main grid */
+  main { flex: 1; overflow-y: auto; padding: 16px; }
+  #grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(calc(var(--icon-size) + 60px), 1fr)); gap: 8px; }
+  .icon-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 10px 10px; display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; transition: border-color .15s, transform .1s; }
+  .icon-card:hover { border-color: var(--accent); transform: translateY(-1px); }
+  .icon-card img { width: var(--icon-size); height: var(--icon-size); object-fit: contain; }
+  .icon-card .icon-name { font-size: 11px; color: var(--text-muted); text-align: center; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%; }
+  .icon-card .icon-sym { font-size: 12px; font-weight: 600; text-align: center; }
+
+  /* Loading / empty */
+  .state { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 300px; gap: 12px; color: var(--text-muted); font-size: 14px; }
+  .spinner { width: 32px; height: 32px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin .8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Pagination */
+  .pagination { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 20px; }
+  .pagination button { background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 6px 14px; border-radius: 7px; cursor: pointer; font-size: 13px; transition: all .15s; }
+  .pagination button:hover { border-color: var(--accent); color: var(--accent); }
+  .pagination button.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .pagination button:disabled { opacity: .3; cursor: not-allowed; }
+  .page-info { font-size: 13px; color: var(--text-muted); }
+
+  /* Modal */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.7); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 100; padding: 20px; }
+  .modal-overlay.hidden { display: none; }
+  .modal { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; width: 100%; max-width: 560px; max-height: 90vh; overflow-y: auto; }
+  .modal-header { display: flex; align-items: center; justify-content: space-between; padding: 20px 24px 16px; border-bottom: 1px solid var(--border); }
+  .modal-title { font-size: 18px; font-weight: 700; }
+  .modal-close { background: var(--surface2); border: 1px solid var(--border); color: var(--text-muted); width: 32px; height: 32px; border-radius: 8px; cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; }
+  .modal-close:hover { color: var(--text); }
+  .modal-body { padding: 20px 24px; display: flex; flex-direction: column; gap: 20px; }
+  .variants-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .variant-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 16px 12px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  .variant-card img { width: 64px; height: 64px; object-fit: contain; }
+  .variant-card .v-label { font-size: 12px; color: var(--text-muted); }
+  .variant-card.missing { opacity: .3; }
+  .meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .meta-item { background: var(--surface2); border-radius: 8px; padding: 10px 12px; }
+  .meta-item .meta-key { font-size: 11px; color: var(--text-muted); margin-bottom: 3px; }
+  .meta-item .meta-val { font-size: 13px; font-weight: 500; word-break: break-all; }
+  .url-row { display: flex; align-items: center; gap: 8px; background: var(--surface2); border-radius: 8px; padding: 10px 12px; }
+  .url-text { flex: 1; font-size: 11px; color: var(--text-muted); word-break: break-all; font-family: monospace; }
+  .copy-btn { flex-shrink: 0; background: var(--accent); border: none; color: #fff; padding: 5px 10px; border-radius: 6px; cursor: pointer; font-size: 12px; transition: opacity .15s; }
+  .copy-btn:hover { opacity: .85; }
+  .section-title { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: .06em; }
+  .tag { display: inline-flex; background: var(--surface2); border: 1px solid var(--border); border-radius: 5px; padding: 2px 8px; font-size: 12px; color: var(--text-muted); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">🪙 <span>crypto</span>-icons</div>
+  <div class="search-wrap">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <input id="search" type="text" placeholder="Search by name or symbol…">
+  </div>
+  <div class="controls">
+    <div class="btn-group" id="variant-group">
+      <button class="active" data-v="branded">Branded</button>
+      <button data-v="mono">Mono</button>
+      <button data-v="background">BG</button>
+    </div>
+    <div class="size-control">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
+      <input id="size-slider" type="range" min="32" max="96" value="48">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
+    </div>
+    <span class="badge" id="count-badge">—</span>
+  </div>
+</header>
+
+<div class="layout">
+  <aside>
+    <div class="sidebar-label">Category</div>
+    <button class="cat-btn active" data-cat="all">
+      <span><span class="cat-icon">✦</span>All</span>
+      <span class="cat-count" id="cnt-all">—</span>
+    </button>
+    <hr>
+    <button class="cat-btn" data-cat="tokens">
+      <span><span class="cat-icon">🪙</span>Tokens</span>
+      <span class="cat-count" id="cnt-tokens">—</span>
+    </button>
+    <button class="cat-btn" data-cat="networks">
+      <span><span class="cat-icon">🌐</span>Networks</span>
+      <span class="cat-count" id="cnt-networks">—</span>
+    </button>
+    <button class="cat-btn" data-cat="exchanges">
+      <span><span class="cat-icon">📊</span>Exchanges</span>
+      <span class="cat-count" id="cnt-exchanges">—</span>
+    </button>
+    <button class="cat-btn" data-cat="wallets">
+      <span><span class="cat-icon">👛</span>Wallets</span>
+      <span class="cat-count" id="cnt-wallets">—</span>
+    </button>
+  </aside>
+
+  <main id="main">
+    <div id="grid"></div>
+    <div id="pagination" class="pagination"></div>
+  </main>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay hidden" id="modal-overlay">
+  <div class="modal" id="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-title">—</div>
+      <button class="modal-close" id="modal-close">✕</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
+<script>
+const CDN = 'https://cdn.jsdmirror.com/gh/GMWalletApp/crypto-icons@main';
+const PER_PAGE = 60;
+const CATS = ['tokens','networks','exchanges','wallets'];
+const CAT_SINGULAR = { tokens:'token', networks:'network', exchanges:'exchange', wallets:'wallet' };
+
+let allItems = [];   // {id, name, symbol?, category, variants, fileName}
+let filtered = [];
+let currentCat = 'all';
+let currentVariant = 'branded';
+let currentPage = 0;
+let query = '';
+
+// CDN URL builder
+function iconUrl(category, variant, fileName) {
+  return `${CDN}/assets/${category}/${variant}/${fileName}.svg`;
+}
+
+// Extract filename from filePath e.g. "token:0X0" → "0x0"
+function getFileName(filePath) {
+  const parts = filePath.split(':');
+  return parts[parts.length - 1].toLowerCase();
+}
+
+// Load all maps
+async function loadMaps() {
+  const results = await Promise.all(CATS.map(cat =>
+    fetch(`${CDN}/maps/${cat}.json`).then(r => r.json()).catch(() => [])
+  ));
+  CATS.forEach((cat, i) => {
+    const items = results[i];
+    items.forEach(item => {
+      allItems.push({
+        ...item,
+        category: cat,
+        fileName: getFileName(item.filePath),
+      });
+    });
+    document.getElementById(`cnt-${cat}`).textContent = items.length;
+  });
+  document.getElementById('cnt-all').textContent = allItems.length;
+  applyFilter();
+}
+
+function applyFilter() {
+  const q = query.toLowerCase();
+  filtered = allItems.filter(item => {
+    if (currentCat !== 'all' && item.category !== currentCat) return false;
+    if (q) {
+      const name = (item.name || '').toLowerCase();
+      const sym = (item.symbol || '').toLowerCase();
+      const id = (item.id || '').toLowerCase();
+      if (!name.includes(q) && !sym.includes(q) && !id.includes(q)) return false;
+    }
+    return true;
+  });
+  currentPage = 0;
+  document.getElementById('count-badge').textContent = filtered.length.toLocaleString() + ' icons';
+  renderGrid();
+}
+
+function renderGrid() {
+  const grid = document.getElementById('grid');
+  const pag = document.getElementById('pagination');
+
+  if (filtered.length === 0) {
+    grid.innerHTML = '<div class="state" style="grid-column:1/-1"><div>No icons found</div></div>';
+    pag.innerHTML = '';
+    return;
+  }
+
+  const totalPages = Math.ceil(filtered.length / PER_PAGE);
+  const start = currentPage * PER_PAGE;
+  const pageItems = filtered.slice(start, start + PER_PAGE);
+
+  grid.innerHTML = pageItems.map((item, i) => {
+    const hasVariant = item.variants.includes(currentVariant);
+    const variant = hasVariant ? currentVariant : (item.variants[0] || 'branded');
+    const url = iconUrl(item.category, variant, item.fileName);
+    const label = item.symbol || item.name || item.id;
+    const sublabel = item.name || item.id;
+    return `<div class="icon-card" onclick="openModal(${start + i})" title="${item.name || item.id}">
+      <img src="${url}" alt="${label}" loading="lazy" onerror="this.style.opacity='.2'">
+      <div class="icon-sym">${label.toUpperCase()}</div>
+      <div class="icon-name">${sublabel}</div>
+    </div>`;
+  }).join('');
+
+  // Pagination
+  const pages = [];
+  pages.push(`<button ${currentPage===0?'disabled':''} onclick="goPage(${currentPage-1})">‹</button>`);
+  const range = pagRange(currentPage, totalPages);
+  let prev = null;
+  range.forEach(p => {
+    if (prev !== null && p - prev > 1) pages.push('<span class="page-info">…</span>');
+    pages.push(`<button class="${p===currentPage?'active':''}" onclick="goPage(${p})">${p+1}</button>`);
+    prev = p;
+  });
+  pages.push(`<button ${currentPage===totalPages-1?'disabled':''} onclick="goPage(${currentPage+1})">›</button>`);
+  pages.push(`<span class="page-info">${start+1}–${Math.min(start+PER_PAGE, filtered.length)} / ${filtered.length}</span>`);
+  pag.innerHTML = pages.join('');
+}
+
+function pagRange(cur, total) {
+  const delta = 2;
+  const range = new Set([0, total-1]);
+  for (let i = Math.max(0, cur-delta); i <= Math.min(total-1, cur+delta); i++) range.add(i);
+  return [...range].sort((a,b)=>a-b);
+}
+
+function goPage(p) {
+  currentPage = p;
+  document.getElementById('main').scrollTop = 0;
+  renderGrid();
+}
+
+function openModal(idx) {
+  const item = filtered[idx];
+  if (!item) return;
+  const overlay = document.getElementById('modal-overlay');
+  const title = document.getElementById('modal-title');
+  const body = document.getElementById('modal-body');
+
+  title.textContent = item.name || item.id;
+
+  const allVariants = ['branded','mono','background'];
+  const variantsHtml = `
+    <div>
+      <div class="section-title" style="margin-bottom:10px">Variants</div>
+      <div class="variants-grid">
+        ${allVariants.map(v => {
+          const has = item.variants.includes(v);
+          const url = iconUrl(item.category, v, item.fileName);
+          return `<div class="variant-card ${has?'':'missing'}">
+            ${has ? `<img src="${url}" alt="${v}" onerror="this.parentElement.classList.add('missing')">` : '<div style="width:64px;height:64px;background:var(--border);border-radius:8px"></div>'}
+            <span class="v-label">${v}</span>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+
+  const metaFields = [
+    ['Category', item.category],
+    ['ID', item.id],
+    item.symbol ? ['Symbol', item.symbol.toUpperCase()] : null,
+    item.chainId ? ['Chain ID', item.chainId] : null,
+    item.caip2id ? ['CAIP-2', item.caip2id] : null,
+    item.type ? ['Type', item.type] : null,
+    item.marketCapRank ? ['Market Cap Rank', '#' + item.marketCapRank] : null,
+  ].filter(Boolean);
+
+  const metaHtml = `
+    <div>
+      <div class="section-title" style="margin-bottom:10px">Details</div>
+      <div class="meta-grid">
+        ${metaFields.map(([k,v]) => `<div class="meta-item"><div class="meta-key">${k}</div><div class="meta-val">${v}</div></div>`).join('')}
+      </div>
+    </div>`;
+
+  const primaryUrl = iconUrl(item.category, currentVariant, item.fileName);
+  const urlHtml = `
+    <div>
+      <div class="section-title" style="margin-bottom:10px">CDN URL (${currentVariant})</div>
+      <div class="url-row">
+        <span class="url-text">${primaryUrl}</span>
+        <button class="copy-btn" onclick="copyUrl('${primaryUrl}', this)">Copy</button>
+      </div>
+    </div>`;
+
+  const addressesHtml = item.addresses && Object.keys(item.addresses).length ? `
+    <div>
+      <div class="section-title" style="margin-bottom:10px">Contract Addresses</div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        ${Object.entries(item.addresses).map(([chain, addr]) =>
+          `<div class="url-row"><span class="url-text"><span style="color:var(--text);margin-right:8px">${chain}</span>${addr}</span><button class="copy-btn" onclick="copyUrl('${addr}', this)">Copy</button></div>`
+        ).join('')}
+      </div>
+    </div>` : '';
+
+  body.innerHTML = variantsHtml + metaHtml + urlHtml + addressesHtml;
+  overlay.classList.remove('hidden');
+}
+
+function copyUrl(text, btn) {
+  navigator.clipboard.writeText(text);
+  const orig = btn.textContent;
+  btn.textContent = '✓';
+  setTimeout(() => btn.textContent = orig, 1200);
+}
+
+// Events
+document.getElementById('modal-close').onclick = () => document.getElementById('modal-overlay').classList.add('hidden');
+document.getElementById('modal-overlay').onclick = e => { if (e.target === e.currentTarget) e.currentTarget.classList.add('hidden'); };
+document.addEventListener('keydown', e => { if (e.key === 'Escape') document.getElementById('modal-overlay').classList.add('hidden'); });
+
+document.getElementById('search').addEventListener('input', e => { query = e.target.value; applyFilter(); });
+
+document.querySelectorAll('.cat-btn').forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentCat = btn.dataset.cat;
+    applyFilter();
+  };
+});
+
+document.querySelectorAll('#variant-group button').forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll('#variant-group button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentVariant = btn.dataset.v;
+    renderGrid();
+  };
+});
+
+document.getElementById('size-slider').addEventListener('input', e => {
+  document.documentElement.style.setProperty('--icon-size', e.target.value + 'px');
+});
+
+// Init
+document.getElementById('grid').innerHTML = '<div class="state" style="grid-column:1/-1"><div class="spinner"></div><div>Loading icons…</div></div>';
+loadMaps();
+</script>
+</body>
+</html>
