@@ -17,10 +17,10 @@ export const CATEGORY_DIR: Record<IconCategory, string> = {
 };
 
 export const CDN_LIST: Array<{ name: string; base: string }> = [
-  { name: "jsdmirror",       base: "https://cdn.jsdmirror.com/gh/GMWalletApp/crypto-icons@main" },
-  { name: "jsdelivr",        base: "https://cdn.jsdelivr.net/gh/GMWalletApp/crypto-icons@main" },
-  { name: "fastly.jsdelivr", base: "https://fastly.jsdelivr.net/gh/GMWalletApp/crypto-icons@main" },
-  { name: "gcore.jsdelivr",  base: "https://gcore.jsdelivr.net/gh/GMWalletApp/crypto-icons@main" },
+  { name: "jsdmirror",       base: "https://cdn.jsdmirror.com/gh/GMWalletApp/crypto-icons@latest" },
+  { name: "jsdelivr",        base: "https://cdn.jsdelivr.net/gh/GMWalletApp/crypto-icons@latest" },
+  { name: "fastly.jsdelivr", base: "https://fastly.jsdelivr.net/gh/GMWalletApp/crypto-icons@latest" },
+  { name: "gcore.jsdelivr",  base: "https://gcore.jsdelivr.net/gh/GMWalletApp/crypto-icons@latest" },
 ];
 
 // In-memory cache: category → alias map

@@ -77,7 +77,7 @@ Networks support `id`, `shortName`, and common aliases:
 ## CDN URL format
 
 ```
-https://cdn.jsdelivr.net/gh/GMWalletApp/crypto-icons@main/assets/{category}/{variant}/{name}.svg
+https://cdn.jsdelivr.net/gh/GMWalletApp/crypto-icons@latest/assets/{category}/{variant}/{name}.svg
 ```
 
 - tokens → `SYMBOL.svg` (uppercase)
