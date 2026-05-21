@@ -3,392 +3,483 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>crypto-icons · Preview</title>
+<title>crypto-icons</title>
 <style>
-  :root {
-    --bg: #0d0d0d;
-    --surface: #161616;
-    --surface2: #1e1e1e;
-    --border: #2a2a2a;
-    --text: #e8e8e8;
-    --text-muted: #666;
-    --accent: #7c6af7;
-    --accent2: #5eead4;
-    --danger: #f87171;
-    --radius: 10px;
-    --icon-size: 48px;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  /* Header */
-  header { display: flex; align-items: center; gap: 16px; padding: 14px 20px; border-bottom: 1px solid var(--border); background: var(--surface); flex-shrink: 0; }
-  .logo { font-size: 18px; font-weight: 700; white-space: nowrap; }
-  .logo span { color: var(--accent); }
-  .search-wrap { flex: 1; position: relative; max-width: 400px; }
-  .search-wrap svg { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); opacity: .4; pointer-events: none; }
-  #search { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; color: var(--text); padding: 8px 12px 8px 34px; font-size: 14px; outline: none; }
-  #search:focus { border-color: var(--accent); }
-  #search::placeholder { color: var(--text-muted); }
-  .controls { display: flex; align-items: center; gap: 10px; margin-left: auto; }
-  .btn-group { display: flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
-  .btn-group button { background: var(--surface2); border: none; color: var(--text-muted); padding: 7px 13px; font-size: 13px; cursor: pointer; transition: all .15s; white-space: nowrap; }
-  .btn-group button.active { background: var(--accent); color: #fff; }
-  .btn-group button:hover:not(.active) { background: var(--border); color: var(--text); }
-  .size-control { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-muted); }
-  #size-slider { accent-color: var(--accent); width: 80px; }
-  .badge { background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 5px 10px; font-size: 12px; color: var(--text-muted); }
-  #count-badge { font-variant-numeric: tabular-nums; }
+:root {
+  --bg: #111;
+  --panel: #181818;
+  --line: #252525;
+  --text: #e2e2e2;
+  --muted: #555;
+  --accent: #6366f1;
+  --radius: 8px;
+  --sz: 48px;
+}
 
-  /* Layout */
-  .layout { display: flex; flex: 1; overflow: hidden; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-size: 14px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
 
-  /* Sidebar */
-  aside { width: 180px; flex-shrink: 0; border-right: 1px solid var(--border); background: var(--surface); padding: 12px 8px; display: flex; flex-direction: column; gap: 4px; overflow-y: auto; }
-  .cat-btn { display: flex; align-items: center; justify-content: space-between; padding: 9px 12px; border-radius: 8px; cursor: pointer; font-size: 14px; border: none; background: transparent; color: var(--text-muted); width: 100%; text-align: left; transition: all .15s; }
-  .cat-btn:hover { background: var(--surface2); color: var(--text); }
-  .cat-btn.active { background: var(--accent); color: #fff; }
-  .cat-btn .cat-count { font-size: 11px; opacity: .7; }
-  .cat-icon { margin-right: 8px; font-size: 16px; }
-  aside hr { border: none; border-top: 1px solid var(--border); margin: 6px 0; }
-  .sidebar-label { font-size: 11px; color: var(--text-muted); padding: 4px 12px; text-transform: uppercase; letter-spacing: .06em; }
+/* ── top bar ── */
+nav {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--line);
+  flex-shrink: 0;
+}
 
-  /* Main grid */
-  main { flex: 1; overflow-y: auto; padding: 16px; }
-  #grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(calc(var(--icon-size) + 60px), 1fr)); gap: 8px; }
-  .icon-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 10px 10px; display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; transition: border-color .15s, transform .1s; }
-  .icon-card:hover { border-color: var(--accent); transform: translateY(-1px); }
-  .icon-card img { width: var(--icon-size); height: var(--icon-size); object-fit: contain; }
-  .icon-card .icon-name { font-size: 11px; color: var(--text-muted); text-align: center; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%; }
-  .icon-card .icon-sym { font-size: 12px; font-weight: 600; text-align: center; }
+.wordmark { font-weight: 600; font-size: 15px; letter-spacing: -.2px; white-space: nowrap; }
+.wordmark em { color: var(--accent); font-style: normal; }
 
-  /* Loading / empty */
-  .state { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 300px; gap: 12px; color: var(--text-muted); font-size: 14px; }
-  .spinner { width: 32px; height: 32px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin .8s linear infinite; }
-  @keyframes spin { to { transform: rotate(360deg); } }
+.search {
+  flex: 1;
+  max-width: 360px;
+  position: relative;
+}
+.search input {
+  width: 100%;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  color: var(--text);
+  padding: 7px 10px 7px 32px;
+  font-size: 13px;
+  outline: none;
+}
+.search input:focus { border-color: var(--accent); }
+.search input::placeholder { color: var(--muted); }
+.search svg { position: absolute; left: 9px; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; }
 
-  /* Pagination */
-  .pagination { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 20px; }
-  .pagination button { background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 6px 14px; border-radius: 7px; cursor: pointer; font-size: 13px; transition: all .15s; }
-  .pagination button:hover { border-color: var(--accent); color: var(--accent); }
-  .pagination button.active { background: var(--accent); border-color: var(--accent); color: #fff; }
-  .pagination button:disabled { opacity: .3; cursor: not-allowed; }
-  .page-info { font-size: 13px; color: var(--text-muted); }
+.nav-right { display: flex; align-items: center; gap: 10px; margin-left: auto; }
 
-  /* Modal */
-  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.7); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 100; padding: 20px; }
-  .modal-overlay.hidden { display: none; }
-  .modal { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; width: 100%; max-width: 560px; max-height: 90vh; overflow-y: auto; }
-  .modal-header { display: flex; align-items: center; justify-content: space-between; padding: 20px 24px 16px; border-bottom: 1px solid var(--border); }
-  .modal-title { font-size: 18px; font-weight: 700; }
-  .modal-close { background: var(--surface2); border: 1px solid var(--border); color: var(--text-muted); width: 32px; height: 32px; border-radius: 8px; cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; }
-  .modal-close:hover { color: var(--text); }
-  .modal-body { padding: 20px 24px; display: flex; flex-direction: column; gap: 20px; }
-  .variants-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-  .variant-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 16px 12px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
-  .variant-card img { width: 64px; height: 64px; object-fit: contain; }
-  .variant-card .v-label { font-size: 12px; color: var(--text-muted); }
-  .variant-card.missing { opacity: .3; }
-  .meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-  .meta-item { background: var(--surface2); border-radius: 8px; padding: 10px 12px; }
-  .meta-item .meta-key { font-size: 11px; color: var(--text-muted); margin-bottom: 3px; }
-  .meta-item .meta-val { font-size: 13px; font-weight: 500; word-break: break-all; }
-  .url-row { display: flex; align-items: center; gap: 8px; background: var(--surface2); border-radius: 8px; padding: 10px 12px; }
-  .url-text { flex: 1; font-size: 11px; color: var(--text-muted); word-break: break-all; font-family: monospace; }
-  .copy-btn { flex-shrink: 0; background: var(--accent); border: none; color: #fff; padding: 5px 10px; border-radius: 6px; cursor: pointer; font-size: 12px; transition: opacity .15s; }
-  .copy-btn:hover { opacity: .85; }
-  .section-title { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: .06em; }
-  .tag { display: inline-flex; background: var(--surface2); border: 1px solid var(--border); border-radius: 5px; padding: 2px 8px; font-size: 12px; color: var(--text-muted); }
+.tabs {
+  display: flex;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.tabs button {
+  background: none;
+  border: none;
+  color: var(--muted);
+  padding: 6px 12px;
+  font-size: 13px;
+  cursor: pointer;
+  border-right: 1px solid var(--line);
+  transition: color .1s, background .1s;
+}
+.tabs button:last-child { border-right: none; }
+.tabs button.on { background: var(--accent); color: #fff; }
+.tabs button:not(.on):hover { color: var(--text); }
+
+.size-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+}
+.size-row input[type=range] { width: 72px; accent-color: var(--accent); }
+
+.count { color: var(--muted); font-size: 12px; white-space: nowrap; }
+
+/* ── body ── */
+.body {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* ── sidebar ── */
+aside {
+  width: 156px;
+  flex-shrink: 0;
+  border-right: 1px solid var(--line);
+  padding: 8px 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.cat {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: var(--muted);
+  width: 100%;
+  text-align: left;
+  font-size: 13px;
+  transition: color .1s, background .1s;
+}
+.cat:hover { color: var(--text); background: var(--panel); }
+.cat.on { color: var(--text); background: var(--panel); font-weight: 500; }
+.cat .n { font-size: 11px; }
+
+/* ── grid ── */
+main {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px;
+}
+
+#grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(calc(var(--sz) + 56px), 1fr));
+  gap: 6px;
+}
+
+.card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 14px 8px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  cursor: pointer;
+  transition: border-color .12s;
+}
+.card:hover { border-color: var(--accent); }
+
+.card img {
+  width: var(--sz);
+  height: var(--sz);
+  object-fit: contain;
+  display: block;
+}
+.card img.err { opacity: .15; }
+
+.card .sym {
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.card .label {
+  font-size: 11px;
+  color: var(--muted);
+  text-align: center;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+}
+
+.empty {
+  grid-column: 1/-1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  color: var(--muted);
+}
+
+/* ── modal ── */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.65);
+  backdrop-filter: blur(3px);
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+.overlay.hide { display: none; }
+
+.modal {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  width: 100%;
+  max-width: 520px;
+  max-height: 85vh;
+  overflow-y: auto;
+}
+
+.mhead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 20px 14px;
+  border-bottom: 1px solid var(--line);
+}
+.mhead h2 { font-size: 16px; font-weight: 600; }
+.mclose {
+  background: none;
+  border: 1px solid var(--line);
+  color: var(--muted);
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.mclose:hover { color: var(--text); }
+
+.mbody { padding: 18px 20px; display: flex; flex-direction: column; gap: 16px; }
+
+.sec-title { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 8px; }
+
+.vgrid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
+.vcard {
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 14px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+.vcard img { width: 56px; height: 56px; object-fit: contain; }
+.vcard .vl { font-size: 11px; color: var(--muted); }
+.vcard.na { opacity: .25; }
+.vcard .vph { width: 56px; height: 56px; background: var(--line); border-radius: 6px; }
+
+.mgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.mfield { background: var(--bg); border-radius: 6px; padding: 9px 11px; }
+.mfield .fk { font-size: 11px; color: var(--muted); margin-bottom: 2px; }
+.mfield .fv { font-size: 13px; word-break: break-all; }
+
+.urlrow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg);
+  border-radius: 6px;
+  padding: 9px 11px;
+}
+.urlrow code { flex: 1; font-size: 11px; color: var(--muted); word-break: break-all; font-family: ui-monospace, monospace; }
+.cpbtn {
+  flex-shrink: 0;
+  background: var(--accent);
+  border: none;
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 12px;
+}
+.cpbtn:hover { opacity: .85; }
 </style>
 </head>
 <body>
 
-<header>
-  <div class="logo">🪙 <span>crypto</span>-icons</div>
-  <div class="search-wrap">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-    <input id="search" type="text" placeholder="Search by name or symbol…">
+<nav>
+  <div class="wordmark">crypto<em>-icons</em></div>
+  <div class="search">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <input id="q" placeholder="Search…" autocomplete="off" spellcheck="false">
   </div>
-  <div class="controls">
-    <div class="btn-group" id="variant-group">
-      <button class="active" data-v="branded">Branded</button>
+  <div class="nav-right">
+    <div class="tabs" id="vtabs">
+      <button class="on" data-v="branded">Branded</button>
       <button data-v="mono">Mono</button>
       <button data-v="background">BG</button>
     </div>
-    <div class="size-control">
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
-      <input id="size-slider" type="range" min="32" max="96" value="48">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
+    <div class="size-row">
+      <svg width="11" height="11" viewBox="0 0 10 10" fill="currentColor"><rect width="10" height="10" rx="2"/></svg>
+      <input id="sz" type="range" min="28" max="96" value="48">
+      <svg width="16" height="16" viewBox="0 0 10 10" fill="currentColor"><rect width="10" height="10" rx="2"/></svg>
     </div>
-    <span class="badge" id="count-badge">—</span>
+    <span class="count" id="cnt"></span>
   </div>
-</header>
+</nav>
 
-<div class="layout">
+<div class="body">
   <aside>
-    <div class="sidebar-label">Category</div>
-    <button class="cat-btn active" data-cat="all">
-      <span><span class="cat-icon">✦</span>All</span>
-      <span class="cat-count" id="cnt-all">—</span>
-    </button>
-    <hr>
-    <button class="cat-btn" data-cat="tokens">
-      <span><span class="cat-icon">🪙</span>Tokens</span>
-      <span class="cat-count" id="cnt-tokens">—</span>
-    </button>
-    <button class="cat-btn" data-cat="networks">
-      <span><span class="cat-icon">🌐</span>Networks</span>
-      <span class="cat-count" id="cnt-networks">—</span>
-    </button>
-    <button class="cat-btn" data-cat="exchanges">
-      <span><span class="cat-icon">📊</span>Exchanges</span>
-      <span class="cat-count" id="cnt-exchanges">—</span>
-    </button>
-    <button class="cat-btn" data-cat="wallets">
-      <span><span class="cat-icon">👛</span>Wallets</span>
-      <span class="cat-count" id="cnt-wallets">—</span>
-    </button>
+    <button class="cat on" data-cat="all">All <span class="n" id="n-all"></span></button>
+    <button class="cat" data-cat="tokens">Tokens <span class="n" id="n-tokens"></span></button>
+    <button class="cat" data-cat="networks">Networks <span class="n" id="n-networks"></span></button>
+    <button class="cat" data-cat="exchanges">Exchanges <span class="n" id="n-exchanges"></span></button>
+    <button class="cat" data-cat="wallets">Wallets <span class="n" id="n-wallets"></span></button>
   </aside>
-
-  <main id="main">
-    <div id="grid"></div>
-    <div id="pagination" class="pagination"></div>
-  </main>
+  <main><div id="grid"></div></main>
 </div>
 
-<!-- Modal -->
-<div class="modal-overlay hidden" id="modal-overlay">
-  <div class="modal" id="modal">
-    <div class="modal-header">
-      <div class="modal-title" id="modal-title">—</div>
-      <button class="modal-close" id="modal-close">✕</button>
+<div class="overlay hide" id="ov">
+  <div class="modal">
+    <div class="mhead">
+      <h2 id="mtitle"></h2>
+      <button class="mclose" id="mclose">✕</button>
     </div>
-    <div class="modal-body" id="modal-body"></div>
+    <div class="mbody" id="mbody"></div>
   </div>
 </div>
 
 <script>
 const CDN = 'https://cdn.jsdmirror.com/gh/GMWalletApp/crypto-icons@main';
-const PER_PAGE = 60;
 const CATS = ['tokens','networks','exchanges','wallets'];
-const CAT_SINGULAR = { tokens:'token', networks:'network', exchanges:'exchange', wallets:'wallet' };
 
-let allItems = [];   // {id, name, symbol?, category, variants, fileName}
-let filtered = [];
-let currentCat = 'all';
-let currentVariant = 'branded';
-let currentPage = 0;
-let query = '';
+let all = [];
+let visible = [];
+let variant = 'branded';
+let cat = 'all';
 
-// CDN URL builder
-function iconUrl(category, variant, fileName) {
-  return `${CDN}/assets/${category}/${variant}/${fileName}.svg`;
+function url(category, v, name) {
+  return `${CDN}/assets/${category}/${v}/${name}.svg`;
 }
 
-// Extract filename from filePath e.g. "token:0X0" → "0x0"
-function getFileName(filePath) {
-  const parts = filePath.split(':');
-  return parts[parts.length - 1].toLowerCase();
+function fname(filePath) {
+  return filePath.split(':').pop().toLowerCase();
 }
 
-// Load all maps
-async function loadMaps() {
-  const results = await Promise.all(CATS.map(cat =>
-    fetch(`${CDN}/maps/${cat}.json`).then(r => r.json()).catch(() => [])
-  ));
-  CATS.forEach((cat, i) => {
-    const items = results[i];
-    items.forEach(item => {
-      allItems.push({
-        ...item,
-        category: cat,
-        fileName: getFileName(item.filePath),
-      });
-    });
-    document.getElementById(`cnt-${cat}`).textContent = items.length;
+async function init() {
+  const maps = await Promise.all(
+    CATS.map(c => fetch(`${CDN}/maps/${c}.json`).then(r => r.json()).catch(() => []))
+  );
+  CATS.forEach((c, i) => {
+    maps[i].forEach(item => all.push({ ...item, _cat: c, _file: fname(item.filePath) }));
+    document.getElementById('n-' + c).textContent = maps[i].length;
   });
-  document.getElementById('cnt-all').textContent = allItems.length;
-  applyFilter();
+  document.getElementById('n-all').textContent = all.length;
+  filter();
 }
 
-function applyFilter() {
-  const q = query.toLowerCase();
-  filtered = allItems.filter(item => {
-    if (currentCat !== 'all' && item.category !== currentCat) return false;
+function filter() {
+  const q = document.getElementById('q').value.trim().toLowerCase();
+  visible = all.filter(item => {
+    if (cat !== 'all' && item._cat !== cat) return false;
     if (q) {
-      const name = (item.name || '').toLowerCase();
-      const sym = (item.symbol || '').toLowerCase();
-      const id = (item.id || '').toLowerCase();
-      if (!name.includes(q) && !sym.includes(q) && !id.includes(q)) return false;
+      const h = (item.symbol || '') + ' ' + (item.name || '') + ' ' + (item.id || '');
+      if (!h.toLowerCase().includes(q)) return false;
     }
     return true;
   });
-  currentPage = 0;
-  document.getElementById('count-badge').textContent = filtered.length.toLocaleString() + ' icons';
-  renderGrid();
+  document.getElementById('cnt').textContent = visible.length.toLocaleString();
+  render();
 }
 
-function renderGrid() {
+function render() {
   const grid = document.getElementById('grid');
-  const pag = document.getElementById('pagination');
-
-  if (filtered.length === 0) {
-    grid.innerHTML = '<div class="state" style="grid-column:1/-1"><div>No icons found</div></div>';
-    pag.innerHTML = '';
+  if (!visible.length) {
+    grid.innerHTML = '<div class="empty">No results</div>';
     return;
   }
 
-  const totalPages = Math.ceil(filtered.length / PER_PAGE);
-  const start = currentPage * PER_PAGE;
-  const pageItems = filtered.slice(start, start + PER_PAGE);
+  // Build all cards at once — images lazy-load
+  const frag = document.createDocumentFragment();
+  visible.forEach((item, i) => {
+    const v = item.variants.includes(variant) ? variant : item.variants[0];
+    const u = url(item._cat, v, item._file);
+    const sym = (item.symbol || item.id || '').toUpperCase();
+    const name = item.name || item.id;
 
-  grid.innerHTML = pageItems.map((item, i) => {
-    const hasVariant = item.variants.includes(currentVariant);
-    const variant = hasVariant ? currentVariant : (item.variants[0] || 'branded');
-    const url = iconUrl(item.category, variant, item.fileName);
-    const label = item.symbol || item.name || item.id;
-    const sublabel = item.name || item.id;
-    return `<div class="icon-card" onclick="openModal(${start + i})" title="${item.name || item.id}">
-      <img src="${url}" alt="${label}" loading="lazy" onerror="this.style.opacity='.2'">
-      <div class="icon-sym">${label.toUpperCase()}</div>
-      <div class="icon-name">${sublabel}</div>
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `
+      <img src="${u}" alt="${sym}" loading="lazy" onerror="this.classList.add('err')">
+      <div class="sym">${sym}</div>
+      <div class="label">${name}</div>`;
+    card.onclick = () => openModal(i);
+    frag.appendChild(card);
+  });
+
+  grid.innerHTML = '';
+  grid.appendChild(frag);
+}
+
+function openModal(i) {
+  const item = visible[i];
+  document.getElementById('mtitle').textContent = item.name || item.id;
+
+  const variants = ['branded','mono','background'];
+  const vcards = variants.map(v => {
+    const has = item.variants.includes(v);
+    const u = url(item._cat, v, item._file);
+    return `<div class="vcard ${has?'':'na'}">
+      ${has ? `<img src="${u}" alt="${v}" loading="lazy">` : '<div class="vph"></div>'}
+      <span class="vl">${v}</span>
     </div>`;
   }).join('');
 
-  // Pagination
-  const pages = [];
-  pages.push(`<button ${currentPage===0?'disabled':''} onclick="goPage(${currentPage-1})">‹</button>`);
-  const range = pagRange(currentPage, totalPages);
-  let prev = null;
-  range.forEach(p => {
-    if (prev !== null && p - prev > 1) pages.push('<span class="page-info">…</span>');
-    pages.push(`<button class="${p===currentPage?'active':''}" onclick="goPage(${p})">${p+1}</button>`);
-    prev = p;
-  });
-  pages.push(`<button ${currentPage===totalPages-1?'disabled':''} onclick="goPage(${currentPage+1})">›</button>`);
-  pages.push(`<span class="page-info">${start+1}–${Math.min(start+PER_PAGE, filtered.length)} / ${filtered.length}</span>`);
-  pag.innerHTML = pages.join('');
-}
-
-function pagRange(cur, total) {
-  const delta = 2;
-  const range = new Set([0, total-1]);
-  for (let i = Math.max(0, cur-delta); i <= Math.min(total-1, cur+delta); i++) range.add(i);
-  return [...range].sort((a,b)=>a-b);
-}
-
-function goPage(p) {
-  currentPage = p;
-  document.getElementById('main').scrollTop = 0;
-  renderGrid();
-}
-
-function openModal(idx) {
-  const item = filtered[idx];
-  if (!item) return;
-  const overlay = document.getElementById('modal-overlay');
-  const title = document.getElementById('modal-title');
-  const body = document.getElementById('modal-body');
-
-  title.textContent = item.name || item.id;
-
-  const allVariants = ['branded','mono','background'];
-  const variantsHtml = `
-    <div>
-      <div class="section-title" style="margin-bottom:10px">Variants</div>
-      <div class="variants-grid">
-        ${allVariants.map(v => {
-          const has = item.variants.includes(v);
-          const url = iconUrl(item.category, v, item.fileName);
-          return `<div class="variant-card ${has?'':'missing'}">
-            ${has ? `<img src="${url}" alt="${v}" onerror="this.parentElement.classList.add('missing')">` : '<div style="width:64px;height:64px;background:var(--border);border-radius:8px"></div>'}
-            <span class="v-label">${v}</span>
-          </div>`;
-        }).join('')}
-      </div>
-    </div>`;
-
-  const metaFields = [
-    ['Category', item.category],
+  const fields = [
+    ['Category', item._cat],
     ['ID', item.id],
     item.symbol ? ['Symbol', item.symbol.toUpperCase()] : null,
     item.chainId ? ['Chain ID', item.chainId] : null,
     item.caip2id ? ['CAIP-2', item.caip2id] : null,
     item.type ? ['Type', item.type] : null,
     item.marketCapRank ? ['Market Cap Rank', '#' + item.marketCapRank] : null,
-  ].filter(Boolean);
+  ].filter(Boolean).map(([k,v]) =>
+    `<div class="mfield"><div class="fk">${k}</div><div class="fv">${v}</div></div>`
+  ).join('');
 
-  const metaHtml = `
-    <div>
-      <div class="section-title" style="margin-bottom:10px">Details</div>
-      <div class="meta-grid">
-        ${metaFields.map(([k,v]) => `<div class="meta-item"><div class="meta-key">${k}</div><div class="meta-val">${v}</div></div>`).join('')}
-      </div>
-    </div>`;
+  const cu = url(item._cat, variant, item._file);
+  const urlRow = `<div class="urlrow"><code>${cu}</code><button class="cpbtn" onclick="cp('${cu}',this)">Copy</button></div>`;
 
-  const primaryUrl = iconUrl(item.category, currentVariant, item.fileName);
-  const urlHtml = `
-    <div>
-      <div class="section-title" style="margin-bottom:10px">CDN URL (${currentVariant})</div>
-      <div class="url-row">
-        <span class="url-text">${primaryUrl}</span>
-        <button class="copy-btn" onclick="copyUrl('${primaryUrl}', this)">Copy</button>
-      </div>
-    </div>`;
-
-  const addressesHtml = item.addresses && Object.keys(item.addresses).length ? `
-    <div>
-      <div class="section-title" style="margin-bottom:10px">Contract Addresses</div>
-      <div style="display:flex;flex-direction:column;gap:6px">
+  const addrs = item.addresses && Object.keys(item.addresses).length
+    ? `<div><div class="sec-title">Contract addresses</div>
         ${Object.entries(item.addresses).map(([chain, addr]) =>
-          `<div class="url-row"><span class="url-text"><span style="color:var(--text);margin-right:8px">${chain}</span>${addr}</span><button class="copy-btn" onclick="copyUrl('${addr}', this)">Copy</button></div>`
+          `<div class="urlrow" style="margin-top:6px"><code><b style="color:var(--text)">${chain}</b>  ${addr}</code><button class="cpbtn" onclick="cp('${addr}',this)">Copy</button></div>`
         ).join('')}
-      </div>
-    </div>` : '';
+      </div>` : '';
 
-  body.innerHTML = variantsHtml + metaHtml + urlHtml + addressesHtml;
-  overlay.classList.remove('hidden');
+  document.getElementById('mbody').innerHTML = `
+    <div><div class="sec-title">Variants</div><div class="vgrid">${vcards}</div></div>
+    <div><div class="sec-title">Details</div><div class="mgrid">${fields}</div></div>
+    <div><div class="sec-title">CDN URL (${variant})</div>${urlRow}</div>
+    ${addrs}`;
+
+  document.getElementById('ov').classList.remove('hide');
 }
 
-function copyUrl(text, btn) {
+function cp(text, btn) {
   navigator.clipboard.writeText(text);
-  const orig = btn.textContent;
   btn.textContent = '✓';
-  setTimeout(() => btn.textContent = orig, 1200);
+  setTimeout(() => btn.textContent = 'Copy', 1200);
 }
 
-// Events
-document.getElementById('modal-close').onclick = () => document.getElementById('modal-overlay').classList.add('hidden');
-document.getElementById('modal-overlay').onclick = e => { if (e.target === e.currentTarget) e.currentTarget.classList.add('hidden'); };
-document.addEventListener('keydown', e => { if (e.key === 'Escape') document.getElementById('modal-overlay').classList.add('hidden'); });
-
-document.getElementById('search').addEventListener('input', e => { query = e.target.value; applyFilter(); });
-
-document.querySelectorAll('.cat-btn').forEach(btn => {
-  btn.onclick = () => {
-    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    currentCat = btn.dataset.cat;
-    applyFilter();
-  };
+// events
+document.getElementById('q').addEventListener('input', filter);
+document.getElementById('sz').addEventListener('input', e => {
+  document.documentElement.style.setProperty('--sz', e.target.value + 'px');
 });
 
-document.querySelectorAll('#variant-group button').forEach(btn => {
-  btn.onclick = () => {
-    document.querySelectorAll('#variant-group button').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    currentVariant = btn.dataset.v;
-    renderGrid();
-  };
-});
+document.querySelectorAll('.cat').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('.cat').forEach(x => x.classList.remove('on'));
+  b.classList.add('on');
+  cat = b.dataset.cat;
+  filter();
+}));
 
-document.getElementById('size-slider').addEventListener('input', e => {
-  document.documentElement.style.setProperty('--icon-size', e.target.value + 'px');
-});
+document.querySelectorAll('#vtabs button').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('#vtabs button').forEach(x => x.classList.remove('on'));
+  b.classList.add('on');
+  variant = b.dataset.v;
+  render();
+}));
 
-// Init
-document.getElementById('grid').innerHTML = '<div class="state" style="grid-column:1/-1"><div class="spinner"></div><div>Loading icons…</div></div>';
-loadMaps();
+document.getElementById('mclose').onclick = () => document.getElementById('ov').classList.add('hide');
+document.getElementById('ov').addEventListener('click', e => { if (e.target === e.currentTarget) e.currentTarget.classList.add('hide'); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') document.getElementById('ov').classList.add('hide'); });
+
+init();
 </script>
 </body>
 </html>
