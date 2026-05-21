@@ -31,7 +31,7 @@ Icons sourced from [web3icons](https://github.com/0xa3k5/web3icons), synced dail
 ## CDN Usage (no install)
 
 ```
-https://cdn.jsdmirror.com/gh/GMWalletApp/crypto-icons@main/assets/{category}/{variant}/{name}.svg
+https://cdn.jsdmirror.com/gh/GMWalletApp/crypto-icons@latest/assets/{category}/{variant}/{name}.svg
 ```
 
 **Parameters:**
@@ -41,17 +41,17 @@ https://cdn.jsdmirror.com/gh/GMWalletApp/crypto-icons@main/assets/{category}/{va
 
 **Examples:**
 ```
-https://cdn.jsdmirror.com/gh/GMWalletApp/crypto-icons@main/assets/tokens/branded/eth.svg
-https://cdn.jsdmirror.com/gh/GMWalletApp/crypto-icons@main/assets/networks/mono/binance-smart-chain.svg
-https://cdn.jsdmirror.com/gh/GMWalletApp/crypto-icons@main/assets/wallets/branded/metamask.svg
+https://cdn.jsdmirror.com/gh/GMWalletApp/crypto-icons@latest/assets/tokens/branded/eth.svg
+https://cdn.jsdmirror.com/gh/GMWalletApp/crypto-icons@latest/assets/networks/mono/binance-smart-chain.svg
+https://cdn.jsdmirror.com/gh/GMWalletApp/crypto-icons@latest/assets/wallets/branded/metamask.svg
 ```
 
 **Mirror CDNs (automatic fallback in npm package):**
 ```
-https://cdn.jsdmirror.com/gh/GMWalletApp/crypto-icons@main/...   (China-optimized)
-https://cdn.jsdelivr.net/gh/GMWalletApp/crypto-icons@main/...
-https://fastly.jsdelivr.net/gh/GMWalletApp/crypto-icons@main/...
-https://gcore.jsdelivr.net/gh/GMWalletApp/crypto-icons@main/...
+https://cdn.jsdmirror.com/gh/GMWalletApp/crypto-icons@latest/...   (China-optimized)
+https://cdn.jsdelivr.net/gh/GMWalletApp/crypto-icons@latest/...
+https://fastly.jsdelivr.net/gh/GMWalletApp/crypto-icons@latest/...
+https://gcore.jsdelivr.net/gh/GMWalletApp/crypto-icons@latest/...
 ```
 
 ---
@@ -198,7 +198,7 @@ Custom icons are preserved across daily syncs.
 `maps/*.json` — full icon listings per category, regenerated on each sync:
 
 ```ts
-import tokens from 'https://cdn.jsdmirror.com/gh/GMWalletApp/crypto-icons@main/maps/tokens.json'
+import tokens from 'https://cdn.jsdmirror.com/gh/GMWalletApp/crypto-icons@latest/maps/tokens.json'
 ```
 
 ---
