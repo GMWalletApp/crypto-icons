@@ -48,7 +48,7 @@ jobs:
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add assets/ maps/
+          git add assets/ maps/ colors/
           if git diff --cached --quiet; then
             echo "Nothing changed, skip commit."
           else
