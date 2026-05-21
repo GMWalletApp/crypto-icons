@@ -469,16 +469,10 @@ function render() {
       card.style.setProperty('--ic', `rgb(${col.r},${col.g},${col.b})`);
     }
 
-    let aliHtml = '';
-    if (alts.length) {
-      aliHtml = `<div class="aliases">${alts.slice(0,3).join(', ')}${alts.length > 3 ? '…' : ''}</div>`;
-    }
-
     card.innerHTML = `
       <img src="${u}" alt="${sym}" loading="lazy" onerror="this.style.opacity='.1'">
       <div class="sym">${sym}</div>
-      <div class="nm">${name}</div>
-      ${aliHtml}`;
+      <div class="nm">${name}</div>`;
     card.onclick = () => openModal(i);
     frag.appendChild(card);
   });
