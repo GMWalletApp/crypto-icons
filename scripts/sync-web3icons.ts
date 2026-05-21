@@ -259,9 +259,6 @@ async function extractColors() {
   let totalUpdated = 0;
 
   for (const category of CATEGORIES) {
-    const brandedDir = join("assets", category, "branded");
-    if (!existsSync(brandedDir)) continue;
-
     const colorFile = join("colors", `${category}.json`);
     const existing: Record<string, RGBColor> = existsSync(colorFile)
       ? JSON.parse(readFileSync(colorFile, "utf8"))
@@ -273,14 +270,29 @@ async function extractColors() {
     );
     let updated = 0;
 
-    const files = readdirSync(brandedDir).filter((f) => f.endsWith(".svg"));
-    for (const file of files) {
-      const name = file.replace(/\.svg$/, "").toLowerCase();
+    // Collect all icon names across variants (branded > background > mono)
+    const variantOrder = ["branded", "background", "mono"] as const;
+    const allNames = new Set<string>();
+    for (const variant of variantOrder) {
+      const dir = join("assets", category, variant);
+      if (existsSync(dir)) {
+        for (const f of readdirSync(dir)) {
+          if (f.endsWith(".svg")) allNames.add(f.replace(/\.svg$/, "").toLowerCase());
+        }
+      }
+    }
 
+    for (const name of allNames) {
       // Skip if already extracted (use --force to re-extract all)
       if (!FORCE && colors[name]) continue;
 
-      const svgPath = join(brandedDir, file);
+      // Prefer branded, fall back to background, then mono
+      let svgPath: string | null = null;
+      for (const variant of variantOrder) {
+        const candidate = join("assets", category, variant, `${name}.svg`);
+        if (existsSync(candidate)) { svgPath = candidate; break; }
+      }
+      if (!svgPath) continue;
       try {
         const buf = readFileSync(svgPath);
         // Rasterize to RGBA, average the color of non-transparent pixels.
