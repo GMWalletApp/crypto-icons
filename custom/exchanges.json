@@ -1,1 +1,16 @@
-[]
+[
+  {
+    "id": "bitfinex",
+    "filePath": "exchange:bitfinex",
+    "name": "Bitfinex",
+    "type": "cex",
+    "variants": ["branded", "mono", "background"]
+  },
+  {
+    "id": "exodus",
+    "filePath": "exchange:exodus",
+    "name": "Exodus",
+    "type": "cex",
+    "variants": ["branded", "mono", "background"]
+  }
+]
