@@ -404,13 +404,15 @@ async function reload() {
 async function init() {
   const results = await Promise.all([
     ...CATS.map(c => fetch(`${CDN}/maps/${c}.json`, {cache:'no-store'}).then(r => r.json()).catch(() => [])),
+    ...CATS.map(c => fetch(`${CDN}/custom/${c}.json`, {cache:'no-store'}).then(r => r.json()).catch(() => [])),
     ...CATS.map(c => fetch(`${CDN}/colors/${c}.json`, {cache:'no-store'}).then(r => r.json()).catch(() => ({}))),
     ...CATS.map(c => fetch(`${CDN}/aliases/${c}.json`, {cache:'no-store'}).then(r => r.json()).catch(() => ({}))),
   ]);
 
-  const maps    = results.slice(0, 4);
-  const colData = results.slice(4, 8);
-  const aliData = results.slice(8, 12);
+  const maps      = results.slice(0, 4);
+  const customArr = results.slice(4, 8);
+  const colData   = results.slice(8, 12);
+  const aliData   = results.slice(12, 16);
 
   CATS.forEach((c, i) => {
     colors[c] = colData[i];
@@ -422,10 +424,14 @@ async function init() {
       if (alias !== canonical) aliasMap[c][canonical].push(alias);
     });
 
-    maps[i].forEach(item => {
+    // Merge custom entries (override maps by id)
+    const customIds = new Set(customArr[i].map(e => e.id));
+    const merged = [...maps[i].filter(e => !customIds.has(e.id)), ...customArr[i]];
+
+    merged.forEach(item => {
       all.push({ ...item, _cat: c, _file: fname(item, c), _filecat: filecat(item.filePath, c) });
     });
-    document.getElementById('n-' + c).textContent = maps[i].length.toLocaleString();
+    document.getElementById('n-' + c).textContent = merged.length.toLocaleString();
   });
   document.getElementById('n-all').textContent = all.length.toLocaleString();
   filter();
